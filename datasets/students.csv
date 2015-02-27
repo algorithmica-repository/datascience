@@ -1,0 +1,49 @@
+Sex,Major,Major2,Major3,Level,Brothers,Sisters,BirthOrder,MilesHome,MilesLocal,Sleep,BloodType,Height
+female,actuarial science,,,freshman,0,1,1,107.54,0.43,7,,62
+male,statistics,computer science,,junior,3,2,3,64.7,0.2,6,A,72
+male,statistics,japanese,spanish,freshman,0,1,1,155.8,0.7,9,B,72
+male,mathematics,statistics,,senior,0,1,1,83.9,1.2,8,,71.5
+male,statistics,,,sophomore,0,0,1,269.7,0.3,7,,71
+female,statistics,,,graduate,0,0,1,68.6,0.9,7.5,O,69
+male,economics,statistics,,sophomore,1,1,1,2.4,0.1,7.5,AB,72
+male,political science,international studies,african studies,senior,1,1,1,114.5,0.8,7,B,70.5
+female,undecided,,,freshman,0,1,1,6495.7,0.52,9.5,B,64.17
+female,undecided,,,freshman,2,2,5,171.9,0.3,7.5,,70.5
+male,economics,statistics,,freshman,2,0,3,122.6,.8,7.0,,71.5
+male,mathematics,economics,statistics,junior,0,0,1,7035,0.8,7,B,70.87
+male,economics,,,sophomore,0,1,2,929.4,0.6,8.5,O,74.8
+female,statistics,marketing,,freshman,1,0,1,126.97,0.44,7.5,O,62.5
+female,economics,,,junior,0,0,1,66.4,0.6,6.5,O,63
+female,statistics,economics,,freshman,0,0,1,6888.1,0.4,8,A,70
+male,economics,mathematics,statistics,sophomore,2,0,3,5.3,.3,8.0,B,75
+female,statistics,,,freshman,0,1,2,281.1,0.85,7,B,68
+male,computer science,,,sophomore,3,3,5,7145.5,0.79,6,A,68
+male,undecided,,,freshman,0,2,3,61.6,0.3,8,O,70
+female,marketing,,,freshman,0,1,1,85.4,1.0,7.5,A,61.5
+male,undecided,,,sophomore,2,0,1,7145.5,0.1,7,O,70
+male,economics,,,senior,1,0,2,6430,2.36,8,A,68.50
+female,mathematics,,,sophomore,0,0,1,6495.3,1.2,7,A,64.25
+male,statistics,,,junior,1,1,3,140.0,1.2,8,,65.0
+male,mathematics,economics,,sophomore,2,2,1,65.2,0.8,7,O,66
+female,english,business,,freshman,1,0,1,116.6,1.1,8.5,O,62.2
+male,mathematics,,,junior,2,0,1,19.7,1.5,8.0,,74.0
+male,undecided,,,sophomore,0,1,2,142.5,0.2,7,O,73.5
+male,architectural studies,,,special,1,0,1,7.6,7.6,9,O,69
+male,mathematics,,,junior,1,0,2,266.5,.6,7.5,,75.75
+male,economics,history,,senior,1,0,2,962.9,1.1,8,O,72
+male,economics,statistics,,sophomore,0,1,1,78.9,0.9,7.50,B,71.25
+male,chemistry,,,freshman,4,0,2,383.2,0.8,8.5,AB,67
+male,statistics,,,sophomore,1,0,2,110.9,0.1,9.0,AB,72
+female,undecided,,,freshman,0,0,1,7247.3,0.78,7,A,65.748
+female,undecided,,,junior,2,2,2,6970,0.5,7,B,64
+female,statistics,economics,,freshman,0,0,1,,0.22,7,B,63.6
+female,finance,statistics,,freshman,7,3,9,7145.5,0.45,7,A,52.4
+male,statistics,,,junior,0,1,2,61,0.4,,B,72.5
+male,statistics,,,freshman,1,0,2,6430,0.28,6,O,66
+female,undecided,,,freshman,1,0,2,6442.4,0.8,8,A,64
+male,economics,statistics,,junior,0,1,,7693.2,0.7,6.5,O,68.4
+female,undecided,,,sophomore,0,0,1,6962.3,0.9,7.5,B,66.14
+male,statistics,,,freshman,1,0,1,963.6,.8,7,O,71
+female,statistics,mathematics,,freshman,0,1,2,6429.2,0.4,7,O,63
+male,statistics,communications,,freshman,1,0,1,273,0.4,8.5,O,75
+female,statistics,economics,,sophomore,0,0,1,7679.8,6.61,7,AB,62.99
