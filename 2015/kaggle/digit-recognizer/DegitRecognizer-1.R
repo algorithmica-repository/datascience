@@ -23,7 +23,7 @@ ctrl = trainControl(method = "cv", # Use cross-validation
                     number = 10) # Use 10 folds for cross-validation
 
 model_knn = train(pcmp,train_data$label, 
-                 method = "knn",
+                 method = "nb",
                  trControl = ctrl)
 model_knn
 summary(model_knn)
