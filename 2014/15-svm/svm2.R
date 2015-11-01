@@ -55,22 +55,3 @@ resamps = resamples(list(Linear = Lmodel, Poly = Pmodel, Radial = Rmodel))
 summary(resamps)
 bwplot(resamps, metric = "Accuracy")
 densityplot(resamps, metric = "Accuracy")
-
-
-
-
-
-testSet = read.table("test.csv", sep = ",", header = TRUE)
-dim(testSet)
-str(testSet)
-head(testSet)
-testSet$Pclass = factor(testSet$Pclass)
-summary(testSet)
-testSet$Fare = ifelse(is.na(testSet$Fare), mean(testSet$Fare, na.rm = TRUE), testSet$Fare)
-
-
-testSet$Survived = predict(model_logit, newdata = testSet)
-
-submission = testSet[,c("PassengerId", "Survived")]
-
-write.table(submission, file = "submission.csv", col.names = TRUE, row.names = FALSE, sep = ",")
