@@ -1,0 +1,56 @@
+help related commands
+--------------------
+help.start()
+help(name) / ?name
+example(name)
+
+workspace commands
+------------------
+ls()
+ls(pattern="")
+rm(object name)
+data()
+source("script-file")
+getwd(), setwd()
+save.image()
+
+history commands
+---------------
+history()
+history(max.show=Inf)
+savehistory(file="")
+loadhistory(file="")
+
+packages commands
+---------------------
+install.packages("packagename")
+install.packages("packagename",repos="")
+library(packagename)
+library() -- shows all packages installed on machine(may or maynot be loaded into R workspace)
+search() -- show all the packages loaded into R workspace and also shows the search path order
+
+
+common functions
+---------------------
+length(object) # number of elements or components
+str(object)    # structure of an object 
+class(object)  # class or type of an object
+names(object)  # names
+
+head(mydata, n=10)/head(mydata, 10)
+
+tail(mydata, n=5)/tail(mydata, 5)
+colnames(mydata)
+rownames(mydata)
+summary(mydata)
+
+summary functions
+----------------
+mean(x)/mean(x, na.rm=TRUE)
+median(x)
+table(x)
+var(x)
+sd(x)
+max(x)-min(x)
+IQR(x)
+quantile(x)
