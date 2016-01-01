@@ -12,9 +12,10 @@ for (i in 1:20) {
 }
 #median based imputation
 names(df) = c('v1', 'v2', 'v3')
-preObj1 = preProcess(df, method = c("medianImpute"))
+preObj1 = preProcess(df, method = c("center","scale","medianImpute"))
 df1=predict(preObj1,df)
 df1
+median(df$v1,na.rm = TRUE)
 
 #knn based imputation
 preObj2 = preProcess(df, method = c("knnImpute") , k = 1)
