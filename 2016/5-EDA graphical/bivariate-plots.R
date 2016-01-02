@@ -25,8 +25,9 @@ chisq.test(titanic$Survived, titanic$Sex)
 
 # Comparing Survived and Embarked using table and bar charts
 xtabs(~Survived + Embarked, data=titanic)
-ggplot(titanic, aes(x = Survived, fill = Embarked)) + geom_bar()
+ggplot(titanic, aes(x = Embarked , fill = Survived)) + geom_bar(position = "fill")
 ggplot(titanic, aes(x = Survived, fill = Embarked)) + geom_bar(position = "fill")
+chisq.test(titanic$Survived,titanic$Embarked)
 
 # Comparing Age and Survived using boxplots 
 ggplot(titanic, aes(x = Survived, y = Age)) + geom_boxplot()
@@ -40,6 +41,8 @@ ggplot(titanic, aes(x = Fare, color = Survived)) + geom_density()
 
 # Comparing Survived and Family using boxplots
 ggplot(titanic, aes(x = Survived, y = Family)) + geom_boxplot()
+ggplot(titanic, aes(x = Family)) + geom_histogram() + facet_grid(Survived ~ .)
+
 
 # Comparing Sibsp and Fare using scatterplot
 cor(titanic$SibSp, titanic$Fare)

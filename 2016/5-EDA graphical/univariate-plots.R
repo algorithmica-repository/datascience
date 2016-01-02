@@ -24,7 +24,7 @@ summary(titanic$Fare)
 ggplot(titanic, aes(x = factor(0), y = Fare)) + geom_boxplot() + coord_flip()
 ggplot(titanic, aes(x = Fare)) + geom_histogram()
 ggplot(titanic, aes(x = Fare)) + geom_histogram(fill = "white", colour = "black")
-ggplot(titanic, aes(x = Fare)) + geom_histogram(aes(y=..density..),fill = "white", colour = "black")
+ggplot(titanic, aes(x = Fare, y=..density..)) + geom_histogram(fill = "white", colour = "black")
 ggplot(titanic, aes(x = Fare)) + geom_histogram(binwidth = 2, fill = "white", colour = "black")
 ggplot(titanic, aes(x = Fare)) + geom_density()
 
