@@ -30,11 +30,11 @@ head(winedata)
 pairs(~X2.8+X3.06,data=winedata)
 cor_matrix = cor(winedata)
 
-//Find the variables which have very less variance
+#Find the variables which have very less variance
 nearZvar = nearZeroVar(winedata, saveMetrics = TRUE)
 nearZvar
 
-//Find the variables which are highly correlated
+#sFind the variables which are highly correlated
 corr_matrix = abs(cor(winedata))
 diag(corr_matrix) = 0
 correlated_col = findCorrelation(corr_matrix, verbose = FALSE , cutoff = .60)
