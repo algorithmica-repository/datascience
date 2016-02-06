@@ -1,5 +1,3 @@
-# to simplify selections
-library(dplyr)
 # for stemming the words
 library(SnowballC)
 # libraries required by caret
@@ -71,8 +69,10 @@ sms_model
 
 #Test the model
 sms_predict = predict(sms_model, sms_corpus_clean_binary, type="prob")
-str(sms_predict)
-head(sms_predict)
+sms_predict
+
+sms_predict = predict(sms_model, sms_corpus_clean_binary)
+sms_predict
 
 cm = confusionMatrix(sms_predict, sms_raw$type, positive="spam")
 cm
