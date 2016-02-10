@@ -4,7 +4,7 @@ library(car)
 v1 = c("male","female","male","female")
 v1_f = factor(v1)
 
-v2 = c("1","2","3","1")
+v2 = c("1","2","3","-1")
 v2_f = factor(v2)
 v2_f=recode(v2_f,"'1' = 'a'; '2'= 'b'; '3'= 'c' ")
 

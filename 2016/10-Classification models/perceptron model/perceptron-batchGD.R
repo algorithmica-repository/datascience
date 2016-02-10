@@ -71,7 +71,7 @@ Y = data$target
 X = as.matrix(X)
 
 stepsize = 1
-iterations = 3000
+iterations = 1000
 solution = batch_gradient_descent(X, Y, stepsize, iterations)
 display.trace(solution)
 plot.trace(X,Y,solution,iterations)
