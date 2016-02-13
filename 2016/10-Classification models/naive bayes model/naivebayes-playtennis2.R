@@ -15,7 +15,7 @@ head(tennis)
 
 #Train the model
 ctrl = trainControl(method="LOOCV")
-tennis_model = train(tennis, tennis$playtennis, method="nb", trControl=ctrl)
+tennis_model = train(tennis[,1:4], tennis$playtennis, method="nb", trControl=ctrl)
 tennis_model$finalModel$tables
 tennis_model$finalModel
 tennis_model
