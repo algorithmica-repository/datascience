@@ -66,12 +66,13 @@ data = read.csv("iris-train.csv", header = TRUE)
 dim(data)
 str(data)
 
+data = data.frame(v1=c(1,3,2,5),v2=c(2,5,1,3),target=c(-1,1,1,-1))
 X = data.frame(v0=rep(1,nrow(data)),data$v1,data$v2)
 Y = data$target
 X = as.matrix(X)
 
 stepsize = 1
-iterations = 1000
+iterations = 100
 solution = batch_gradient_descent(X, Y, stepsize, iterations)
 display.trace(solution)
 plot.trace(X,Y,solution,iterations)

@@ -42,7 +42,7 @@ plot.data = function(X,Y) {
   plot(X[,1],X[,2],col=ifelse(Y == -1,"yellow","blue"),xlab="v1",ylab="v2",main="Perceptron")
 }
 
-plot.lines = function(solution) {
+plot.lines = function(iterations,solution) {
   for (i in 2:iterations) {
     W = solution[[1]][i,]
     abline(0, -W[1]/W[2], col=rgb(0.9,0,0,0.4))
@@ -50,7 +50,7 @@ plot.lines = function(solution) {
   abline(0, -W[1]/W[2], col="green", lwd=4)
 }
 
-plot.error = function(solution) {
+plot.error = function(solution,X,Y) {
   w1 = seq(-20, 10, 1)
   w2 = seq(-20, 5, 1) 
   error = matrix(rep(0,length(w1)*length(w2)),length(w1),length(w2))
@@ -70,9 +70,9 @@ plot.convergence = function(iterations, solution) {
 plot.trace = function(X, Y, solution, iterations) {
   windows(width=50, height=60)
   plot.data(X,Y)
-  plot.lines(solution)
+  plot.lines(iterations,solution)
   x11()
-  plot.error(solution)
+  plot.error(solution,X,Y)
   x11()
   plot.convergence(iterations,solution)
 }
@@ -89,6 +89,5 @@ X = as.matrix(X)
 stepsize = 1
 iterations = 3000
 solution = batch_gradient_descent(X, Y, stepsize, iterations)
-solution[[1]]
 display.trace(solution)
 plot.trace(X,Y,solution,iterations)
