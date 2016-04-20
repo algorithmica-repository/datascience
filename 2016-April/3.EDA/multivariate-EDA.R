@@ -11,6 +11,8 @@ titanic$Pclass = as.factor(titanic$Pclass)
 titanic = titanic[c("Pclass","Survived","Sex","Age","Family","Fare","Embarked")]
 
 ggplot(titanic, aes(x=Sex, fill=Pclass)) + geom_bar(position="fill") + facet_grid(Survived ~ .)
+ggplot(titanic, aes(x=Sex, fill=Pclass)) + geom_bar(position="fill") + facet_grid(. ~ Survived)
+ggplot(titanic, aes(x=Fare)) + geom_histogram() + facet_grid(Survived ~ Sex)
 
 #Plotting all pair wise relationships
 ggpairs(titanic, columns=1:4,axisLabels="show")
