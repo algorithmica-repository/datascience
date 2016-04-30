@@ -1,5 +1,7 @@
 library(rpart)
-library(caret)
+library(rattle)
+library(rpart.plot)
+library(RColorBrewer)
 
 setwd("C:\\Users\\Thimma Reddy\\Documents\\GitHub\\datascience\\2014\\kaggle\\titanic\\data")
 
@@ -11,16 +13,10 @@ titanic_train$Name = as.character(titanic_train$Name)
 titanic_train$Survived = as.factor(titanic_train$Survived)
 summary(titanic_train)
 
-set.seed(100)
-tr_ctrl = trainControl(method="cv")
-tr_grid = data.frame(.cp=0.02)
-#rpart_ctrl = rpart.control(minsplit=2)
-
-model11 = train(Survived ~ Sex + Pclass + Embarked + Parch + SibSp + Fare, data = titanic_train, method='rpart', trControl = tr_ctrl, tuneGrid = tr_grid)
-model11$finalModel
-
-model11 = train(Survived ~ Sex + Pclass + Embarked + Parch + SibSp + Fare, data = titanic_train, method='J48', trControl = tr_ctrl)
-model11$finalModel
+model = rpart(Survived ~ Pclass + Sex + Age + Fare, data = titanic_train, method="class")
+model
+plot(model)
+text(model)
 
 titanic_test = read.csv("test.csv")
 dim(titanic_test)
