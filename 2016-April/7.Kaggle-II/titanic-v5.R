@@ -1,56 +1,63 @@
 library(rpart)
 library(caret)
+library(stringr)
+library(magrittr)
 
 setwd("C:\\Users\\Thimma Reddy\\Documents\\GitHub\\datascience\\2014\\kaggle\\titanic\\data")
 
-titanic_train = read.csv("train.csv")
+titanic_train = read.csv("train.csv", header = TRUE, na.strings=c("NA",""))
+titanic_test = read.csv("test.csv", header = TRUE, na.strings=c("NA",""))
+titanic_test$Survived = NA
+
+# Combine train and test data for common preprocessing. It avoids issues like factor column mismatch,.,
+titanic = rbind(titanic_train, titanic_test)
+dim(titanic)
+summary(titanic)
+
+# Type Cast the features to required target taype 
+titanic$Pclass = as.factor(titanic$Pclass)
+titanic$Name = as.character(titanic$Name)
+titanic$Survived = as.factor(titanic$Survived)
+
+# Handle missing data with mode and mean
+titanic$Embarked[is.na(titanic$Embarked)] = 'S'
+titanic$Fare[is.na(titanic$Fare)] = mean(titanic_train$Fare, na.rm = TRUE)
+
+# function to extract title from names of passengers
+extract_title = function(x) {
+  title = str_trim(strsplit(x, split='[,.]')[[1]][2])
+  if(title %in% c('Mme', 'Mlle') ) 
+    return('Mlle')
+  else if(title %in% c('Dona', 'Lady', 'the Countess'))
+    return('Lady')
+  else if(title %in% c('Capt', 'Don', 'Major', 'Sir', 'Jonkheer', 'Dr') )
+    return('Sir')
+  else
+    return(title)
+}
+
+# Feature engineering of name column
+titanic$Title = sapply(titanic$Name, FUN=extract_title)
+titanic$Title = factor(titanic$Title)
+
+# Feature engineering of family size column
+titanic$FamilySize = titanic$Parch + titanic$SibSp + 1
+
+titanic_train = titanic[1:891,]
+titanic_test = titanic[892:1309,]
 dim(titanic_train)
-str(titanic_train)
-titanic_train$Pclass = as.factor(titanic_train$Pclass)
-titanic_train$Name = as.character(titanic_train$Name)
-titanic_train$Survived = as.factor(titanic_train$Survived)
-summary(titanic_train)
+dim(titanic_test)
+
+xtabs(~Survived + Title, data=titanic_train)
+ggplot(titanic_train, aes(x = Title, fill = Survived)) + geom_bar(position = "fill")
 
 set.seed(100)
-tr_ctrl = trainControl(method="cv")
-tr_grid = data.frame(.cp=0.02)
-#rpart_ctrl = rpart.control(minsplit=2)
-model = bagging(Survived ~ Sex + Pclass + Embarked + Parch + SibSp + Fare, data = titanic_train)
-model$mtrees
+tr_ctrl = trainControl(method="boot")
 
-model1 = train(Survived ~ Sex + Pclass + Embarked + Parch + SibSp + Fare, data = titanic_train, method='rpart', trControl = tr_ctrl, tuneGrid = tr_grid)
-model11$finalModel
+model1 = train(Survived ~ FamilySize + Title + Sex + Pclass + Embarked + Fare, data = titanic_train, method='rf', trControl = tr_ctrl, ntree = 500)
 
-model1 = train(x = titanic_train[,c("Sex", "Pclass", "Embarked", "Parch", "SibSp", "Fare")] , y = titanic_train$Survived,  method='rpart', trControl = tr_ctrl, tuneGrid = tr_grid)
-model1$finalModel
+model2 = train(x = titanic_train[,c("FamilySize", "Title", "Sex", "Pclass", "Embarked", "Fare")], y = titanic_train[,"Survived"], data = titanic_train, method='rf', trControl = tr_ctrl, ntree = 500)
 
-model11 = train(Survived ~ Sex + Pclass + Embarked + Parch + SibSp + Fare, data = titanic_train, method='J48', trControl = tr_ctrl)
-model11$finalModel
-
-varImp(model3)
-plot(varImp(model1))
-
-tr_ctrl3 = trainControl(method="boot", number=10)
-model3 = train(Survived ~ Sex + Pclass + Embarked + Parch + SibSp + Fare, data = titanic_train, method='treebag', trControl = tr_ctrl3)
-model3$finalModel$mtrees
-show(model3)
-
-tr_ctrl4 = trainControl(method="boot")
-model4 = train(x = titanic_train[,c("Sex", "Pclass", "Embarked", "Parch", "SibSp", "Fare")] , y = titanic_train$Survived, method='rf', trControl = tr_ctrl4, ntree = 100, importance = TRUE)
-varImp(model4$finalModel)
-getTree(model4$finalModel)
-show(model3)
-
-model5 = train(Survived ~ ., data = titanic_train, method='rf', trControl = tr_ctrl4, ntree = 100)
-
-titanic_test = read.csv("test.csv")
-dim(titanic_test)
-str(titanic_test)
-
-titanic_test$Pclass = as.factor(titanic_test$Pclass)
-titanic_test$Name = as.character(titanic_test$Name)
-
-titanic_test$Survived = predict(model, titanic_test , type="class")
-
+titanic_test$Survived = predict(model1, titanic_test[,c("FamilySize", "Title", "Sex", "Pclass", "Embarked", "Fare")])
 result = titanic_test[,c("PassengerId","Survived")]
-write.csv(result,"submission.csv",row.names = F, col.names = T )
+write.csv(result,"submission.csv",row.names = F)
