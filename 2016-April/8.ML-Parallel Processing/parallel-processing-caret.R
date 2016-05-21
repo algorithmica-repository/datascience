@@ -1,5 +1,4 @@
-library(randomForest)
-library(foreach) 
+library(caret)
 library(doParallel)
 
 #register cluster for parallel processing
@@ -14,10 +13,11 @@ str(titanic_train)
 titanic_train$Pclass = as.factor(titanic_train$Pclass)
 titanic_train$Survived = as.factor(titanic_train$Survived)
 
-#Build random forest model in parallel
-model_rf = foreach(ntree=rep(100,4), .combine=combine, .multicombine=TRUE, .packages="randomForest") %dopar% 
-            {
-              randomForest(titanic_train[,c("Sex","Pclass","Embarked","Parch","SibSp","Fare")], titanic_train[,"Survived"], ntree=ntree)
-            }
+set.seed(100)
+tr_ctrl = trainControl(method="boot")
+
+model = train(Survived ~ Sex + Pclass + Embarked + Fare + Parch + SibSp, data = titanic_train, method='rf', trControl = tr_ctrl, ntree = 500)
+
 stopCluster(cl)
+
 
