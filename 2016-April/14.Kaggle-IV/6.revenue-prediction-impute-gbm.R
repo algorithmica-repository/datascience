@@ -11,19 +11,12 @@ library(gbm)
 cl = makeCluster(detectCores())
 registerDoParallel(cl)
 
-
-setwd("C:/Users/Thimma Reddy/Documents/GitHub/datascience/datasets/restaurant-revenue")
+setwd("D:\\kaggle\\restaurant-revenue")
 
 restaurant_train = read.csv("train.csv", na.strings=c("","NA"))
-restaurant_test = read.csv("test.csv", na.strings=c("","NA"))
-
-#combining train and test datasets for handling factor type differences
-restaurant_test$revenue = NA
-restaurant = rbind(restaurant_train, restaurant_test)
-dim(restaurant)
-str(restaurant)
-
-restaurant_train = restaurant[1:137,]
+restaurant_train$City = as.character(restaurant_train$City)
+restaurant_train$Type = factor(restaurant_train$Type, levels=c("DT","FC","IL","MB"))
+#levels(restaurant_train$Type) = c(levels(restaurant_train$Type),"MB")
 dim(restaurant_train)
 str(restaurant_train)
 
@@ -32,6 +25,20 @@ str(restaurant_train)
 summary(restaurant_train)
 X11()
 ggplot(restaurant_train) + geom_histogram(aes(x = revenue), fill = "white", colour = "black")
+
+restaurant_train$revenue = log(restaurant_train$revenue)
+X11()
+ggplot(restaurant_train) + geom_histogram(aes(x = revenue), fill = "white", colour = "black")
+
+# restaurant_train$revenue_inv = 1/(restaurant_train$revenue)
+# X11()
+# ggplot(restaurant_train) + geom_histogram(aes(x = revenue_inv), fill = "white", colour = "black")
+# 
+# restaurant_train$revenue_sqrt = sqrt(restaurant_train$revenue)
+# X11()
+# ggplot(restaurant_train) + geom_histogram(aes(x = revenue_sqrt), fill = "white", colour = "black")
+
+
 
 #Exploring missing data
 X11()
@@ -85,9 +92,10 @@ impute = function(data) {
   imputeObj = preProcess(data, method="bagImpute")
   return (imputeObj)
 }
-restaurant_train[restaurant_train==0] = NA
-imputeObj = impute(restaurant_train)
-restaurant_train1 = predict(imputeObj,restaurant_train)
+restaurant_train1 = restaurant_train[,-c(1:3,ncol(restaurant_train))]
+restaurant_train1[restaurant_train1==0] = NA
+imputeObj = impute(restaurant_train1)
+restaurant_train1 = predict(imputeObj,restaurant_train1)
 dim(restaurant_train1)
 str(restaurant_train1)
 
@@ -115,62 +123,62 @@ add.features = function(data) {
   day = as.numeric(substr(as.character(tmp.df$Date),9,10))
   tmp.df = cbind(tmp.df, day = day)
   
-  min.year = head(sort(year))[1]
-  days = as.numeric(tmp.df$Date - as.Date(paste0(min.year,"-01-01"))) 
+  days = as.numeric(as.Date("01/01/2015", format="%m/%d/%Y") - tmp.df$Date) 
   tmp.df = cbind(tmp.df, days = days)
   
   return(tmp.df)
 }
-features_new_df = add.features(restaurant_train2$Open.Date)
+features_new_df = add.features(restaurant_train$Open.Date)
 restaurant_train3 = cbind(restaurant_train2, features_new_df)
 dim(restaurant_train3)
 str(restaurant_train3)
 
-##Step4: Model building - Random Forest
+##Step4: Model building - Gradient boosted regression
 set.seed(100)
-tr_ctrl = trainControl(method="cv", number = 10)
-features.exclude = c(1,2,3,43)
-model1 = train(x = restaurant_train3[,-features.exclude], y = restaurant_train3[,"revenue"],
-               method = "rf", trControl = tr_ctrl, importance=T)
-model1
-plot(model1)
-model1$finalModel
-varImp(model1, scale = F)
-X11()
-varImpPlot(model1$finalModel)
+tr_ctrl = trainControl(method="cv")
+gbmGrid = expand.grid(interaction.depth = 3:7,
+                      n.trees = seq(100, 500, by = 50),
+                      shrinkage = c(0.01,0.1),
+                      n.minobsinnode = 5)
 
-features.exclude = c(1,2,3)
-restaurant_train3 = restaurant_train3[,-features.exclude]
-model2 = train(revenue ~ ., data = restaurant_train3, method = "knn", trControl = tr_ctrl, importance=T)
-model2
-plot(model2)
-model2$finalModel
-varImp(model2, scale = F)
+model_gbm = train(revenue ~ ., data = cbind(restaurant_train3, revenue=restaurant_train$revenue),
+                  method = "gbm", trControl = tr_ctrl, tuneGrid = gbmGrid)
+model_gbm
+plot(model_gbm)
+model_gbm$finalModel
+varImp(model_gbm)
 X11()
-varImpPlot(model2$finalModel)
+varImpPlot(model_gbm$finalModel)
+
+set.seed(100)
+tr_ctrl_rf = trainControl(method="boot")
+model_rf = train(revenue ~ ., data = cbind(restaurant_train3, revenue=restaurant_train$revenue),
+                  method = "rf", trControl = tr_ctrl_rf)
+model_rf$finalModel
 
 stopCluster(cl)
 
 ##Step5: Deployment and prediction outcomes for test data
-restaurant_test = restaurant[138:nrow(restaurant),]
+restaurant_test = read.csv("test.csv", na.strings=c("","NA"))
 dim(restaurant_test)
 str(restaurant_test)
 
-restaurant_test[restaurant_test==0] = NA
-restaurant_test1 = predict(imputeObj,restaurant_test)
+restaurant_test1 = restaurant_test[,-c(1:3)]
+restaurant_test1[restaurant_test1==0] = NA
+restaurant_test1 = predict(imputeObj,restaurant_test1)
 dim(restaurant_test1)
 str(restaurant_test1)
 
 restaurant_test2 = restaurant_test1[, var_obj$zeroVar==FALSE]
+dim(restaurant_test2)
+str(restaurant_test2)
 
-features_new_df = add.features(restaurant_test2$Open.Date)
+features_new_df = add.features(restaurant_test$Open.Date)
 restaurant_test3 = cbind(restaurant_test2, features_new_df)
 dim(restaurant_test3)
 str(restaurant_test3)
 
-features.exclude = c(1,2,3)
-restaurant_test3$revenue = predict(model2,restaurant_test3[,-features.exclude])
-result = restaurant_test2[,c("Id","revenue")]
-names(result) = c("Id","Prediction")
-write.csv(result,"submission.csv",row.names = F)
 
+restaurant_test3$revenue = exp(predict(model_gbm,restaurant_test3))
+result = data.frame(Id=restaurant_test[,"Id"], Prediction=restaurant_test3[,"revenue"])
+write.csv(result,"submission.csv",row.names = F)

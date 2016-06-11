@@ -5,25 +5,16 @@ library(corrplot)
 library(reshape2)
 library(Amelia)
 library(doParallel)
-library(mice)
 
 #register cluster for parallel processing
 cl = makeCluster(detectCores())
 registerDoParallel(cl)
 
-
-setwd("C:/Users/Thimma Reddy/Documents/GitHub/datascience/datasets/restaurant-revenue")
+setwd("C:\\Users\\Thimma Reddy\\Documents\\GitHub\\datascience\\datasets\\restaurant-revenue")
 
 restaurant_train = read.csv("train.csv", na.strings=c("","NA"))
-restaurant_test = read.csv("test.csv", na.strings=c("","NA"))
-
-#combining train and test datasets for handling factor type differences
-restaurant_test$revenue = NA
-restaurant = rbind(restaurant_train, restaurant_test)
-dim(restaurant)
-str(restaurant)
-
-restaurant_train = restaurant[1:137,]
+restaurant_train$City = as.character(restaurant_train$City)
+levels(restaurant_train$Type) = c(levels(restaurant_train$Type),"MB")
 dim(restaurant_train)
 str(restaurant_train)
 
@@ -81,17 +72,9 @@ corrplot(correlations, order = "hclust", addrect=3)
 
 
 ###Step:2 Data preprocessing
-#handling missing data
-impute = function(data, method='rf') {
-  data[data==0] = NA
-  tempData = mice(data, m=1, maxit=2, meth=method, 
-                   seed=501, printFlag=FALSE)
-  return (complete(tempData, 1))
-}
-restaurant_train1 = impute(restaurant_train)
+restaurant_train1 = restaurant_train[,-c(1:3,ncol(restaurant_train))]
 dim(restaurant_train1)
 str(restaurant_train1)
-restaurant_train1 = restaurant_train
 
 ###Step3: Feature engineering
 #a.finding and filtering zero/near-zero variance features
@@ -104,20 +87,7 @@ restaurant_train2 = restaurant_train1[, var_obj$zeroVar==FALSE]
 dim(restaurant_train2)
 str(restaurant_train2)
 
-#b.finding and filtering highly correlated features
-remove.correlated.features = function(data) {
-  nums = sapply(data, is.numeric)
-  correlations = abs(cor(data[,nums]))
-  highCorr = findCorrelation(correlations, cutoff = .85)
-  return(highCorr)
-}
-features_highCorr = remove.correlated.features(restaurant_train2)
-tmp.df = restaurant_train2[,c("Open.Date")]
-restaurant_train3 = cbind(restaurant_train2[,-features_highCorr], Open.Date = tmp.df)
-dim(restaurant_train3)
-str(restaurant_train3)
-
-#c.adding new features
+#b.adding new features
 add.features = function(data) {
   tmp.df = data.frame(Date = as.Date(data, "%m/%d/%Y"))
   
@@ -130,58 +100,48 @@ add.features = function(data) {
   day = as.numeric(substr(as.character(tmp.df$Date),9,10))
   tmp.df = cbind(tmp.df, day = day)
   
-  min.year = head(sort(year))[1]
-  days = as.numeric(tmp.df$Date - as.Date(paste0(min.year,"-01-01"))) 
+  days = as.numeric(as.Date("01/01/2015", format="%m/%d/%Y") - tmp.df$Date) 
   tmp.df = cbind(tmp.df, days = days)
   
   return(tmp.df)
 }
-features_new_df = add.features(restaurant_train3$Open.Date)
-restaurant_train4 = cbind(restaurant_train3, features_new_df)
-dim(restaurant_train4)
-str(restaurant_train4)
+features_new_df = add.features(restaurant_train$Open.Date)
+restaurant_train3 = cbind(restaurant_train2, features_new_df)
+dim(restaurant_train3)
+str(restaurant_train3)
 
-##Step4: Model building
+##Step4: Model building - Random Forest
 set.seed(100)
-tr_ctrl = trainControl(method="cv", number = 10)
-features.exclude = c(1,2,25,26)
-model = train(x = restaurant_train4[,-features.exclude], y = restaurant_train4[,"revenue"],
-              method = "rf", trControl = tr_ctrl)
-model
-model$finalModel
-
-gbmGrid = expand.grid(interaction.depth = seq(1, 7, by = 2),
-                      n.trees = seq(100, 1000, by = 50),
-                      shrinkage = c(0.01, 0.1),
-                      n.minobsinnode = c(5,10))
-model3 = train(revenue ~ ., data = restaurant_train2,method = "gbm", trControl = tr_ctrl, tuneGrid = gbmGrid, importance=T)
-model3
-model3$finalModel
-varImp(model3, scale=F)
+tr_ctrl = trainControl(method="boot")
+model_rf = train(x = restaurant_train3, y = restaurant_train[,"revenue"],
+                 method = "rf", trControl = tr_ctrl, importance=T)
+model_rf
+plot(model_rf)
+model_rf$finalModel
+varImp(model_rf)
 X11()
-plot(model3)
+varImpPlot(model_rf$finalModel)
 
 stopCluster(cl)
 
 ##Step5: Deployment and prediction outcomes for test data
-restaurant_test = restaurant[138:nrow(restaurant),]
+restaurant_test = read.csv("test.csv", na.strings=c("","NA"))
 dim(restaurant_test)
 str(restaurant_test)
 
-restaurant_test1 = impute(restaurant_test, method="sample")
+restaurant_test1 = restaurant_test[,-c(1:3)]
+dim(restaurant_test1)
+str(restaurant_test1)
 
 restaurant_test2 = restaurant_test1[, var_obj$zeroVar==FALSE]
+dim(restaurant_test2)
+str(restaurant_test2)
 
-tmp.df = restaurant_test2[,c("Open.Date")]
-restaurant_test3 = cbind(restaurant_test2[,-features_highCorr], Open.Date = tmp.df)
+features_new_df = add.features(restaurant_test$Open.Date)
+restaurant_test3 = cbind(restaurant_test2, features_new_df)
+dim(restaurant_test3)
+str(restaurant_test3)
 
-features_new_df = add.features(restaurant_test3$Open.Date)
-restaurant_test4 = cbind(restaurant_test3, features_new_df)
-dim(restaurant_test4)
-str(restaurant_test4)
-
-restaurant_test4$revenue = predict(model,restaurant_test4[,-features.exclude])
-result = restaurant_test4[,c("Id","revenue")]
-names(result) = c("Id","Prediction")
+restaurant_test3$revenue = predict(model_rf,restaurant_test3)
+result = data.frame(Id=restaurant_test[,"Id"], revenue=restaurant_test3[,"revenue"])
 write.csv(result,"submission.csv",row.names = F)
-
