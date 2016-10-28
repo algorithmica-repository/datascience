@@ -1,3 +1,5 @@
+library(rpart)
+
 setwd("C:/Users/Algorithmica/Downloads")
 titanic_train = read.csv("train.csv")
 class(titanic_train)
@@ -17,9 +19,14 @@ xtabs(~ Embarked + Survived, titanic_train)
 xtabs(~ Embarked + Survived + Sex, titanic_train)
 xtabs(~ Embarked + Survived +  Pclass + Sex, titanic_train)
 summary(titanic_train$Fare)
-xtabs(~ Fare + Survived, titanic_train)
+xtabs(~ Fare + Survived + Sex, titanic_train)
+
+tree_model = rpart(Survived ~ Sex + Pclass + Embarked + Fare, titanic_train)
 
 titanic_test = read.csv("test.csv")
 dim(titanic_test)
-titanic_test$Survived=ifelse(titanic_test$Sex == "female",ifelse(titanic_test$Pclass=='3' & titanic_test$Embarked=='S',0,1),0)
+str(titanic_test)
+titanic_test$Pclass = as.factor(titanic_test$Pclass)
+
+titanic_test$Survived = predict(tree_model, titanic_test, type="class")
 write.csv(titanic_test[,c("PassengerId","Survived")],"submission.csv", row.names = F)
