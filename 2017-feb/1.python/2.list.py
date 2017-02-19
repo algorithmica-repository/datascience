@@ -9,6 +9,7 @@ type(list2)
 
 #sliced access to elements of list
 list1[0]
+list1[-1]
 list1[0:2]
 list1[0:]
 list1[:3]
