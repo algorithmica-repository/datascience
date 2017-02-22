@@ -18,7 +18,7 @@ titanic_train['Sex'] = titanic_train['Sex'].astype('category')
 titanic_train['Embarked'] = titanic_train['Embarked'].astype('category')
 
 
-#explorebivariate relationships: catg vs catg 
-tmp1 = pd.crosstab(index=titanic_train['Sex'], columns=titanic_train['Survived'])
+#explore bivariate relationships: categorical vs categorical 
+tmp1 = pd.crosstab(index=titanic_train['Survived'], columns=titanic_train['Sex'])
 type(tmp1)
-pd.crosstab(index=titanic_train['Pclass'], columns=titanic_train['Survived'])
+pd.crosstab(index=titanic_train['Survived'], columns=titanic_train['Pclass'], margins=True)
