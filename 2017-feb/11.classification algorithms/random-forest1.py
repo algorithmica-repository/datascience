@@ -45,21 +45,3 @@ param_grid = {'n_estimators':[100,200,500,1000], 'max_features':[2,3,4]}
 grid_model = model_selection.GridSearchCV(rf_estimator3, param_grid, cv=10, n_jobs=4)
 grid_model.fit(X_train,y_train)
 grid_model.grid_scores_
-
-rf_estimator.oob_score_
-
-#pipeline for test data
-titanic_test = pd.read_csv("test.csv")
-titanic_test.apply(lambda x : sum(x.isnull()))
-titanic_test.Fare[titanic_test['Fare'].isnull()] = titanic_test['Fare'].mean()
-
-
-titanic_test1 = titanic_test.copy()
-titanic_test1.Sex = le.fit_transform(titanic_test1.Sex)
-titanic_test1.Embarked = le.fit_transform(titanic_test1.Embarked)
-titanic_test1.Pclass = le.fit_transform(titanic_test1.Pclass)
-
-X_test = titanic_test1[['Sex','Embarked','Pclass','Fare']]
-titanic_test1['Survived'] = rf_estimator.predict(X_test)
-
-titanic_test1.to_csv("submission.csv", columns=['PassengerId','Survived'], index=False)
