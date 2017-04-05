@@ -1,8 +1,9 @@
 import os
 import pandas as pd
-from sklearn import ensemble
+from sklearn import neighbors
 from sklearn import preprocessing
 from sklearn import model_selection
+from sklearn_pandas import DataFrameMapper
 
 #returns current working directory
 os.getcwd()
@@ -83,25 +84,27 @@ titanic_all1.shape
 titanic_all1.info()
 titanic_all1.drop(['PassengerId','Name','FamilySize','SibSp','Parch','Ticket','Cabin','Survived'], axis=1, inplace=True)
 
-titanic_all1[0:2]
-titanic_all[['Survived']].iloc[0:2]
+#scale all the columns with z-scores
+mapper = DataFrameMapper([(titanic_all1.columns, preprocessing.StandardScaler())])
+scaled_features = mapper.fit_transform(titanic_all1)
+type(scaled_features)
+titanic_all2 = pd.DataFrame(scaled_features, columns=titanic_all1.columns)
 
 #split titanic data as train and test
-X_train = titanic_all1[0:890]
-type(X_train)
+X_train = titanic_all2.iloc[0:891]
 X_train.shape
 X_train.info()
-y_train = titanic_all[['Survived']].iloc[0:891]
-type(y_train)
+y_train = titanic_all['Survived'].iloc[0:891]
 
-parameter_grid = dict(n_estimators=[300,400],
-                      criterion=['gini','entropy'],
-                      max_features=[3,4,5,6,7,8])
-rf_estimator = ensemble.RandomForestClassifier(random_state=100)
-rf_grid_estimator = model_selection.GridSearchCV(estimator=rf_estimator, param_grid=parameter_grid, cv=10, verbose=1, n_jobs=10, refit=True)
-rf_grid_estimator.fit(X_train,y_train)
-rf_grid_estimator.grid_scores_
+parameter_grid = dict(n_neighbors=[3,4,5,6,7],
+                      weights=['uniform','distance'])
+knn_estimator = neighbors.KNeighborsClassifier()
+knn_grid_estimator = model_selection.GridSearchCV(estimator=knn_estimator, param_grid=parameter_grid, cv=10, verbose=1, n_jobs=10)
+knn_grid_estimator.fit(X_train,y_train)
+knn_grid_estimator.grid_scores_
 
-X_test = titanic_all1[891:1309]
+X_test = titanic_all2.iloc[891:1309]
 #number of features in test data mismatches with train data
-titanic_test['Survived'] = rf_grid_estimator.predict(X_test)
+titanic_test['Survived'] =knn_grid_estimator.predict(X_test)
+titanic_test['Survived'] = titanic_test['Survived'].map(lambda x:int(x))
+titanic_test.to_csv("submission.csv", columns=['PassengerId','Survived'], index=False)
