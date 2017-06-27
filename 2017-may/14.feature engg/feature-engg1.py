@@ -24,6 +24,7 @@ titanic_train.Embarked[titanic_train['Embarked'].isnull()] = 'S'
 #pre-process Age
 imputer = preprocessing.Imputer()
 titanic_train[['Age']] = imputer.fit_transform(titanic_train[['Age']])
+sns.distplot(titanic_train['Age'])
 sns.factorplot(x="Age", row="Survived", data=titanic_train, kind="box", size=6)
 sns.factorplot(x="Age", row="Survived", data=titanic_train, kind="box", size=6)
 sns.FacetGrid(titanic_train, row="Survived",size=8).map(sns.distplot, "Age").add_legend()
@@ -68,32 +69,37 @@ pd.crosstab(index=titanic_train["Title"], columns="count")
 pd.crosstab(index=titanic_train['Survived'], columns=titanic_train['Title'])
 sns.factorplot(x="Survived", hue="Title", data=titanic_train, kind="count", size=6)
 
-#process ticket feature
-def extract_id(ticket):        
-        id = ticket.replace('.','').replace('/','').split()[0]
-        if not id.isdigit() and len(id) > 0:
-            return id.upper()
-        else: 
-            return 'X'
-
-titanic_train['TicketId'] = titanic_train['Ticket'].map(extract_id)
-
-pd.crosstab(index=titanic_train["TicketId"], columns="count")   
-pd.crosstab(index=titanic_train['Survived'], columns=titanic_train['TicketId'])
-sns.factorplot(x="Survived", hue="TicketId", data=titanic_train, kind="count", size=6)
-
-titanic_train1 = pd.get_dummies(titanic_train, columns=['Pclass', 'FamilyType', 'Embarked', 'Sex','Title','TicketId'])
-type(titanic_train1)
+titanic_train1 = pd.get_dummies(titanic_train, columns=['Pclass', 'FamilyType', 'Embarked', 'Sex','Title'])
+titanic_train1.shape
 titanic_train1.info()
-titanic_train1.drop(['PassengerId','Name','FamilySize','SibSp','Parch','Ticket','Cabin','Survived'], axis=1, inplace=True)
+titanic_train1.drop(['PassengerId','Name','Ticket','Cabin','Survived'], axis=1, inplace=True)
 
 X_train = titanic_train1
 y_train = titanic_train['Survived']
 
-parameter_grid = dict(n_estimators=[300,400],
+rf_grid = dict(n_estimators=list(range(100,1000,100)),
                       criterion=['gini','entropy'],
-                      max_features=[3,4,5,6,7,8])
-rf_estimator = ensemble.RandomForestClassifier(random_state=100)
-rf_grid_estimator = model_selection.GridSearchCV(estimator=rf_estimator, param_grid=parameter_grid, cv=10, verbose=1, n_jobs=10, refit=True)
+                      max_features=list(range(3,8,1)))
+rf_estimator = ensemble.RandomForestClassifier(random_state=2017)
+rf_grid_estimator = model_selection.GridSearchCV(estimator=rf_estimator, param_grid=rf_grid, cv=10, verbose=1, n_jobs=10, refit=True)
 rf_grid_estimator.fit(X_train,y_train)
 rf_grid_estimator.grid_scores_
+rf_grid_estimator.best_score_
+rf_grid_estimator.best_params_
+best_est = rf_grid_estimator.best_estimator_
+best_est.feature_importances_
+
+fi = pd.DataFrame({'features':titanic_train1.columns,
+              'importance':best_est.feature_importances_})
+#sns.factorplot(x="features", hue="importance", data=fi, kind="count", size=6)
+
+gbm_tree_estimator = ensemble.GradientBoostingClassifier(n_estimators=5, random_state=2017)
+gbm_grid = {'n_estimators':list(range(100,2000,100)),'learning_rate':[0.1,0.2, 0.3],'max_depth':list(range(3,9))}
+gbm_grid_estimator = model_selection.GridSearchCV(gbm_tree_estimator,gbm_grid, cv=10, n_jobs=10)
+gbm_grid_estimator.fit(X_train, y_train)
+gbm_grid_estimator.grid_scores_
+gbm_grid_estimator.best_score_
+gbm_grid_estimator.best_params_
+
+best_est = rf_grid_estimator.best_estimator_
+best_est.feature_importances_
