@@ -9,7 +9,10 @@ titanic_train.info()
 
 titanic_train['Survived']
 titanic_train.groupby('Pclass').size()
-titanic_train.groupby(['Pclass', 'Survived']).size()
+#find pattern for which females are 0? and which males are 1?
+titanic_train.groupby(['Sex','Pclass','Survived']).size()
+titanic_train.groupby(['Sex','Embarked','Survived']).size()
+titanic_train.groupby(['Sex','Pclass','Embarked','Survived']).size()
 
 titanic_test = pd.read_csv('D:/titanic/test.csv')
 titanic_test.shape
