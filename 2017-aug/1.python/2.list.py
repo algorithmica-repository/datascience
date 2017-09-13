@@ -12,3 +12,11 @@ list1[2] = 100
 print(list1)
 
 list1.append(10)
+
+list3 = [list1, 60, list2]
+len(list3)
+
+
+
+
+
