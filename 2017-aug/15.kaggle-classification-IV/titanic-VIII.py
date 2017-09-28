@@ -16,6 +16,7 @@ titanic_test.shape
 titanic_test.info()
 titanic_test.Survived = None
 
+#it gives the same never of levels for all the categorical variables
 titanic = pd.concat([titanic_train, titanic_test])
 
 #create title column from name
@@ -23,8 +24,11 @@ def extract_title(name):
      return name.split(',')[1].split('.')[0].strip()
 titanic['Title'] = titanic['Name'].map(extract_title)
 
+#create an instance of Imputer class with required arguments
 mean_imputer = preprocessing.Imputer()
+#compute mean of age and fare respectively
 mean_imputer.fit(titanic_train[['Age','Fare']])
+#fill up the missing data with the computed means 
 titanic[['Age','Fare']] = mean_imputer.transform(titanic[['Age','Fare']])
 
 #creaate categorical age column from age
@@ -64,10 +68,11 @@ X_train.shape
 X_train.info()
 y_train = titanic_train['Survived']
 
-tree_estimator = tree.DecisionTreeClassifier(random_state=2017)
+tree_estimator = tree.DecisionTreeClassifier(random_state=100)
 dt_grid = {'criterion':['gini','entropy'], 'max_depth':list(range(3,10))}
 grid_tree_estimator = model_selection.GridSearchCV(tree_estimator, dt_grid, cv=10)
 grid_tree_estimator.fit(X_train, y_train)
+print(grid_tree_estimator.grid_scores_)
 print(grid_tree_estimator.best_score_)
 print(grid_tree_estimator.best_params_)
 print(grid_tree_estimator.score(X_train, y_train))
