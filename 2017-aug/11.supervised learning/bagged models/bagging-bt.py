@@ -80,11 +80,6 @@ print(grid_bt_estimator.best_score_)
 print(grid_bt_estimator.best_params_)
 print(grid_bt_estimator.score(X_train, y_train))
 
-#exlore feature importances calculated by decision tree algorithm
-features = X_train.columns
-importances = grid_bt_estimator.best_estimator_.feature_importances_
-fe_df = pd.DataFrame({'feature':features, 'importance': importances})
-
 X_test = titanic2[titanic_train.shape[0]:]
 X_test.shape
 X_test.info()
