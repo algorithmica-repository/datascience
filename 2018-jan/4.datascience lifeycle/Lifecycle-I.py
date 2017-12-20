@@ -41,4 +41,11 @@ tree.export_graphviz(dt_estimator, out_file = dot_data, feature_names = X_train.
 graph = pydot.graph_from_dot_data(dot_data.getvalue())[0] 
 graph.write_pdf("decision-tree.pdf")
 
-#model deplyment phase
+#prediction on test data using model
+titanic_test = pd.read_csv('titanic_test.csv')
+titanic_test.shape
+titanic_test.info()
+
+X_test = titanic_test[features]
+titanic_test['Survived'] = dt_estimator.predict(X_test)
+
