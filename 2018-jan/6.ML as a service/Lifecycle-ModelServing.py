@@ -1,16 +1,20 @@
 from flask import Flask, jsonify, request
 from sklearn.externals import joblib
 import pandas as pd
+import numpy as np
 import os
 
 app = Flask(__name__)
 
 @app.route('/predict', methods=['POST'])
 def predict():
-     json_ = request.json
-     query_df = pd.DataFrame(json_)
-     prediction = dt_estimator.predict(query_df)
-     return jsonify({'prediction': list(prediction)})
+     data = request.json
+     titanic_test = pd.DataFrame(data)
+     features = ['Pclass', 'Sex', 'Embarked']
+     titanic_test1 = pd.get_dummies(titanic_test, columns=features)
+     prediction = dt_estimator.predict(titanic_test1)
+     print(prediction)
+     return jsonify(prediction=prediction)
  
 MODEL_DIR = 'C:/Users/Algorithmica/Downloads'
 MODEL_FILE = 'decision-tree-v1.pkl'
