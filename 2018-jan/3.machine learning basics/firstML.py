@@ -33,3 +33,4 @@ titanic_test.info()
 
 X_test = titanic_test[features]
 titanic_test['Survived'] = dt_estimator.predict(X_test)
+titanic_test.to_csv('submission.csv', columns=['PassengerId','Survived'],index=False)
