@@ -22,24 +22,15 @@ titanic_train1.drop(features_to_drop, axis=1, inplace=True)
 X_train = titanic_train1
 y_train = titanic_train[['Survived']]
 
-#create an instance of machine learning class 
 dt_estimator = tree.DecisionTreeClassifier(random_state=100)
-dt_param_distr = {'criterion':['gini','entropy'], 'max_depth':[3,4,5,6,7], 'min_samples_split':[2,5,10]}
-#create an instance of GridSearchCV class
-random_dt_estimator = model_selection.RandomizedSearchCV(dt_estimator, dt_param_distr, cv=10, n_iter= 12, refit='True', return_train_score=True)
-#apply cv for each parameter combination and build final model on entire
-#data with the best parameter combination
-random_dt_estimator.fit(X_train, y_train)
-#retrieve the final model with the best parameters
-print(random_dt_estimator.best_estimator_)
-print(random_dt_estimator.best_params_)
+dt_grid = {'max_depth':list(range(3,12))}
+grid_dt_estimator = model_selection.GridSearchCV(dt_estimator, dt_grid, cv=10)
+grid_dt_estimator.fit(X_train, y_train)
+
+print(grid_dt_estimator.best_estimator_)
+print(grid_dt_estimator.best_params_)
 
 #find the cv and train scores of final model
 print(grid_dt_estimator.best_score_)
 print(grid_dt_estimator.score(X_train, y_train))
-
-#get the detailed train and cv scores across grid
-print(grid_dt_estimator.cv_results_.get('mean_test_score'))
-print(grid_dt_estimator.cv_results_.get('mean_train_score'))
-
 

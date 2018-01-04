@@ -33,10 +33,12 @@ grid_dt_estimator.fit(X_train, y_train)
 #retrieve the final model with the best parameters
 print(grid_dt_estimator.best_estimator_)
 print(grid_dt_estimator.best_params_)
-print(grid_dt_estimator.best_score_)
 
-#retrieve entire grid summary
-print(grid_dt_estimator.cv_results_)
+#find the cv and train scores of final model
+print(grid_dt_estimator.best_score_)
+print(grid_dt_estimator.score(X_train, y_train))
+
+#get the detailed train and cv scores across grid
 print(grid_dt_estimator.cv_results_.get('mean_test_score'))
 print(grid_dt_estimator.cv_results_.get('mean_train_score'))
 
