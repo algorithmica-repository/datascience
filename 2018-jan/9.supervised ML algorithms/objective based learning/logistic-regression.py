@@ -81,10 +81,12 @@ selected_features = X_train.columns[fs_model.get_support()]
 
 #build model using selected features
 lr_estimator = linear_model.LogisticRegression(random_state=100)
-lr_grid = {'C':[0.1,0.2,0.5], 'max_iter':list(range(100,1000,200))}
+lr_grid = {'penalty':['l1','l2'], 'C':[0.1,0.2,0.5,1,2], 'max_iter':list(range(100,1000,500))}
 grid_lr_estimator = model_selection.GridSearchCV(lr_estimator, lr_grid, cv=10)
 grid_lr_estimator.fit(X_train1, y_train)
+print(grid_lr_estimator.best_params_)
 final_model = grid_lr_estimator.best_estimator_
 print(final_model.coef_)
 print(final_model.intercept_)
 print(grid_lr_estimator.best_score_)
+print(final_model.score(X_train1, y_train))
