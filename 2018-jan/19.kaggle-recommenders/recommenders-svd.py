@@ -26,3 +26,17 @@ algo = gs.best_estimator['rmse']
 trainSet = movie_train.build_full_trainset()
 algo.fit(trainSet)
 
+rows = csv.reader(open('F:/test_v2.csv'))
+rows = list(rows)
+rows.pop(0)
+f = open('F:/submission.csv', 'w',newline='')
+writer = csv.writer(f)
+writer.writerow(['ID', 'rating'])
+count = 0
+for row in rows:
+  count = count + 1
+  pred = algo.predict(row[1], row[2])
+  print(pred)
+  writer.writerow([row[0], pred[3]])
+f.close()
+print(count)
