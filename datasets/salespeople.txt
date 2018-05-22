@@ -1,4 +1,0 @@
-Sales	January	February	March
-Peacock	150	400	260
-Davolio	125	329	160
-Suyama	140	290	290
