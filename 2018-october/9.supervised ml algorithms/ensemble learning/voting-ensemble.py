@@ -1,8 +1,7 @@
 import pandas as pd
-from sklearn import tree, model_selection, preprocessing, ensemble, feature_selection
+from sklearn import tree, model_selection, preprocessing, ensemble, feature_selection, neighbors, naive_bayes
 from sklearn_pandas import CategoricalImputer
 import numpy as np
-import xgboost as xgb
 
 #creation of data frames from csv
 titanic_train = pd.read_csv("C:\\Users\\Algorithmica\\Downloads\\titanic_train.csv")
@@ -84,45 +83,44 @@ features = ['Age', 'Fare', 'Parch' , 'SibSp', 'FamilySize']
 tmp2 = titanic[features].values
 
 tmp = np.concatenate((tmp1,tmp2), axis=1)
+scaler = preprocessing.StandardScaler()
+tmp = scaler.fit_transform(tmp)
 
 X_train = tmp[:titanic_train.shape[0]]
 y_train = titanic_train['Survived']
 
-#ada boost
-ada_estimator = ensemble.AdaBoostClassifier(base_estimator=tree.DecisionTreeClassifier(),random_state=100)
-ada_grid = {'n_estimators':list(range(50,101,50)), 'learning_rate':[0.1,0.2,1.0], 'base_estimator__max_depth':[1,3,5], 'base_estimator__criterion':['entropy', 'gini'] }
-ada_grid_estimator = model_selection.GridSearchCV(ada_estimator, ada_grid, scoring='accuracy', cv=10, return_train_score=True)
-ada_grid_estimator.fit(X_train, y_train)
+#hard voting ensemble
+dt_estimator = tree.DecisionTreeClassifier(random_state=100)
 
-print(ada_grid_estimator.best_score_)
-print(ada_grid_estimator.best_params_)
-final_estimator = ada_grid_estimator.best_estimator_
-print(final_estimator.estimators_)
-print(final_estimator.estimator_weights_)
-print(final_estimator.estimator_errors_)
-print(final_estimator.score(X_train, y_train))
+knn_estimator = neighbors.KNeighborsClassifier()
 
-#gradient boosting
-gb_estimator = ensemble.GradientBoostingClassifier(random_state=100)
-gb_grid = {'n_estimators':list(range(50,101,50)), 'learning_rate':[0.1,0.2,1.0], 'max_depth':[1,3,5]}
-gb_grid_estimator = model_selection.GridSearchCV(gb_estimator, gb_grid, scoring='accuracy', cv=10, return_train_score=True)
-gb_grid_estimator.fit(X_train, y_train)
+nb_estimator = naive_bayes.GaussianNB()
 
-print(gb_grid_estimator.best_score_)
-print(gb_grid_estimator.best_params_)
-final_estimator = gb_grid_estimator.best_estimator_
+ada_estimator = ensemble.AdaBoostClassifier(random_state=100)
+
+rf_estimator = ensemble.RandomForestClassifier(random_state=100)
+
+estimators = [('dt', dt_estimator), ('knn', knn_estimator), ('nb', nb_estimator) , ('rf', rf_estimator), ('ada', ada_estimator)]
+hvoting_estimator = ensemble.VotingClassifier(estimators)
+voting_grid = {'dt__max_depth':[3,7], 'knn__n_neighbors':[3,5,7], 'ada__n_estimators':[50, 100], 'rf__n_estimators':[50, 100] }
+hvoting_grid_estimator = model_selection.GridSearchCV(hvoting_estimator, voting_grid, scoring='accuracy', cv=10, return_train_score=True)
+hvoting_grid_estimator.fit(X_train, y_train)
+
+print(hvoting_grid_estimator.best_score_)
+print(hvoting_grid_estimator.best_params_)
+final_estimator = hvoting_grid_estimator.best_estimator_
 print(final_estimator.estimators_)
 print(final_estimator.score(X_train, y_train))
 
-#xgb = boosting + regulaization for overfit control
-xgb_estimator = xgb.XGBClassifier(random_state=100, n_jobs=-1)
-xgb_grid = {'n_estimators':list(range(50,101,50)), 'learning_rate':[0.1,0.2,1.0], 'max_depth':[1,3,5], 'gamma':[0,0.01,0.1,0.2], 'reg_alpha':[0,0.5,1], 'reg_lambda':[0,0.5,1]}
-xgb_grid_estimator = model_selection.GridSearchCV(xgb_estimator, xgb_grid, scoring='accuracy', cv=10, return_train_score=True)
-xgb_grid_estimator.fit(X_train, y_train)
+#soft voting ensemble
+svoting_estimator = ensemble.VotingClassifier(estimators, voting='soft', weights=[1,1,1,2,2])
+svoting_grid_estimator = model_selection.GridSearchCV(svoting_estimator, voting_grid, scoring='accuracy', cv=10, return_train_score=True)
+svoting_grid_estimator.fit(X_train, y_train)
 
-print(xgb_grid_estimator.best_score_)
-print(xgb_grid_estimator.best_params_)
-final_estimator = xgb_grid_estimator.best_estimator_
+print(svoting_grid_estimator.best_score_)
+print(svoting_grid_estimator.best_params_)
+final_estimator = svoting_grid_estimator.best_estimator_
+print(final_estimator.estimators_)
 print(final_estimator.score(X_train, y_train))
 
 X_test = tmp[titanic_train.shape[0]:]
