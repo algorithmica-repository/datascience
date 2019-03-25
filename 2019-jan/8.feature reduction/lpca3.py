@@ -23,12 +23,12 @@ def plot_data_3d(X, y, labels=['X1', 'X2','X3']):
     ax.set_ylabel(labels[1])
     ax.set_zlabel(labels[2])
 
-X, y = make_classification(n_samples = 100,
-                                       n_features = 3,
-                                       n_informative = 2,
-                                       n_redundant = 1,
-                                       n_classes = 2,
-                                       weights = [.4, .6])
+X, y = make_classification(n_samples = 200,
+                                       n_features = 5,
+                                       n_informative = 3,
+                                       n_redundant = 2,
+                                       n_classes = 3,
+                                       weights = [.6,.4])
 
 X_train, X_test, y_train, y_test = train_test_split(X, 
                                                     y, 
@@ -36,9 +36,9 @@ X_train, X_test, y_train, y_test = train_test_split(X,
                                                     random_state=1)
 corr = np.corrcoef(X_train, rowvar=False)
 sns.heatmap(corr)
-plot_data_3d(X_train, y_train) 
+#plot_data_3d(X_train, y_train) 
 
-lpca = decomposition.PCA(2)
+lpca = decomposition.PCA(3)
 pca_data = lpca.fit_transform(X_train)
 print(lpca.explained_variance_ratio_)
-plot_data_2d(pca_data, y_train, ['PC1', 'PC2'])
+plot_data_3d(pca_data, y_train, ['PC1', 'PC2', 'PC3'])
