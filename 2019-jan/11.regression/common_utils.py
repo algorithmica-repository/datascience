@@ -20,6 +20,96 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import Pipeline
 import sklearn
 
+def get_continuous_features(df):
+    return df.select_dtypes(include=['number']).columns
+
+def get_categorical_features(df):
+    return df.select_dtypes(exclude=['number']).columns
+
+def cast_cont_to_cat(df, features):
+    for feature in features:
+        df[feature] = df[feature].astype('category')
+
+def get_categorical_imputers(df, features):    
+    feature_defs = []
+    for col_name in features:
+        feature_defs.append((col_name, CategoricalImputer()))
+    multi_imputer = DataFrameMapper(feature_defs, input_df=True, df_out=True)
+    multi_imputer.fit(df[features])
+    return multi_imputer
+
+def get_continuous_imputers(df, features):
+    cont_imputer = preprocessing.Imputer()
+    cont_imputer.fit(df[features])
+    print(cont_imputer.statistics_)
+    return cont_imputer
+
+def get_features_to_drop_on_missingdata(df, threshold) :
+    tmp = df.isnull().sum()
+    return list(tmp[tmp/float(df.shape[0]) > threshold].index)
+
+def drop_features(df, features):
+    return df.drop(features, axis=1, inplace=False)
+
+def ohe(df, features):
+    return pd.get_dummies(df, columns = features)
+
+def get_scaler(df):
+    scaler = preprocessing.StandardScaler()
+    scaler.fit(df)
+    return scaler
+
+def get_zero_variance_filter(X_train):
+    tmp = feature_selection.VarianceThreshold()
+    return tmp.fit()
+
+def corr_heatmap(X):
+    corr = np.corrcoef(X, rowvar=False)
+    sns.heatmap(corr, annot=False)
+  
+def feature_reduction_pca(X, n_components):
+    lpca = decomposition.PCA(n_components)
+    pca_data = lpca.fit_transform(X)
+    var = np.cumsum(np.round(lpca.explained_variance_ratio_, decimals=3)*100)
+    plt.ylabel('% Variance Explained')
+    plt.xlabel('# of Principal Components')
+    plt.title('PCA Analysis')
+    plt.style.context('seaborn-whitegrid')
+    plt.plot(var)
+    return pca_data
+
+def feature_reduction_tsne(X, n_components=2):
+    tsne = manifold.TSNE(n_components)
+    tsne_data = tsne.fit_transform(X)
+    return tsne_data
+
+def get_important_features(estimator, X, threshold='median'):
+    if isinstance(estimator, sklearn.linear_model.Lasso) :
+        selected_features = X.columns[estimator.coef_!=0]
+    else:
+        tmp_model = feature_selection.SelectFromModel(estimator, prefit=True, threshold=threshold)
+        selected_features = X.columns[tmp_model.get_support()]
+    return selected_features 
+
+def select_features(estimator, X, threshold='median'):
+    tmp_model = feature_selection.SelectFromModel(estimator, prefit=True, threshold=threshold)
+    selected_features = X.columns[tmp_model.get_support()]
+    return pd.DataFrame(tmp_model.transform(X), columns = selected_features)  
+
+
+def plot_feature_importances(estimator, X, cutoff=40):
+    if isinstance(estimator, sklearn.linear_model.Lasso) :
+        importances = estimator.coef_
+    else:
+        importances = estimator.feature_importances_
+    indices = np.argsort(importances)[::-1][:cutoff]
+    plt.figure()
+    g = sns.barplot(y=X.columns[indices][:cutoff],x = importances[indices][:cutoff] , orient='h')
+    g.set_xlabel("Relative importance",fontsize=12)
+    g.set_ylabel("Features",fontsize=12)
+    g.tick_params(labelsize=9)
+    g.set_title("Feature importances based on: " + str(estimator).split('(')[0] + ' model' ) 
+ 
 def grid_search_plot_one_parameter_curves(estimator, grid, X, y, scoring="accuracy",cv=10):
     grid_estimator = model_selection.GridSearchCV(estimator, grid, cv=cv, return_train_score=True, scoring = scoring)
     grid_estimator.fit(X, y)
@@ -109,8 +199,11 @@ def get_best_model(estimator, grid, X, y, scoring='accuracy', cv=10, path='C://'
     elif (name.startswith('SV') or name.startswith('Logistic') or name.startswith('Linear') or
           name.startswith('Ridge') or name.startswith('Lasso') or name.startswith('Elastic')
          ) :
-        print("Coefficients:" + str(final_model.coef_) )
-        print("Intercept:" + str(final_model.intercept_) )
+        if hasattr(final_model, 'coef_'):
+            print("Coefficients:" + str(final_model.coef_) )
+            print("Intercept:" + str(final_model.intercept_) )
+        else :
+            print("No model to display")
     else :
         print("No model to display")
     print("Best parameters:" + str(grid_estimator.best_params_) )
