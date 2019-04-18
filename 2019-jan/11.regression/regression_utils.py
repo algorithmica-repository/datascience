@@ -23,6 +23,13 @@ import sklearn
 def rmse(y_orig, y_pred):
     return math.sqrt(metrics.mean_squared_error(y_orig,y_pred) )
 
+def generate_nonlinear_synthetic_sine_data_regression(n_samples):
+    np.random.seed(0)
+    X = np.random.normal(size=n_samples)
+    y =  np.sin(X)
+    X = X.reshape(-1,1)
+    return X, y
+
 def generate_nonlinear_synthetic_data_regression(n_samples, n_features):
     np.random.seed(0)
     if n_features == 1:
@@ -45,59 +52,47 @@ def generate_linear_synthetic_data_regression(n_samples, n_features, n_informati
                            random_state=0, noise=noise)
     return X, y
 
-def plot_data_2d_regression(X, y, ax = None, x_limit=None, y_limit=None, title=None):
+def plot_data_2d_regression(X, y, ax = None, x_limit=None, y_limit=None, title=None, new_window=False, color='blue'):
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
     else:
         X = X.values()
         labels = X.columns
-     
-    plt.figure()
+    if new_window:
+        plt.figure()
     if ax is None:
         ax = plt.axes()   
     if y_limit:
         ax.set_ylim(y_limit[0], y_limit[1])
     if x_limit:
         ax.set_xlim(x_limit[0], x_limit[1])
-    ax.scatter(X, y, c='blue')
+    ax.scatter(X, y, c=color)
     ax.set_xlabel(labels[0])
     ax.set_ylabel("target")
     ax.set_title(title)
-
-def plot_model_2d_regression(estimator, X, y, ax=None, x_limit=None, y_limit=None, title=None):
-    if isinstance(X, np.ndarray) :
-        labels =['X'+str(i) for i in range(X.shape[1])]
-    else:
-        X = X.values()
-        labels = X.columns
-     
-    if ax is None:
-        plt.figure()
-        ax = plt.axes() 
-    if y_limit:
-        ax.set_ylim(y_limit[0], y_limit[1])
-    if x_limit:
-        ax.set_xlim(x_limit[0], x_limit[1])
-        
-    ax.scatter(X, y, c='blue')
+    return ax
+    
+def plot_model_2d_regression(estimator, X, y, ax=None, x_limit=None, y_limit=None, title=None, new_window=False, color_model='red', color_data='blue'):
+    ax = plot_data_2d_regression(X, y, ax, x_limit, y_limit, title, new_window, color_data)
     x_min, x_max = X[:, 0].min(), X[:, 0].max()
     xx = np.arange(x_min, x_max, 0.1)
     y_pred = estimator.predict(xx.reshape(-1, 1))
-    ax.plot(xx, y_pred, color='red')
-    ax.set_xlabel(labels[0])
-    ax.set_ylabel("target")
-    ax.set_title(title)
+    ax.plot(xx, y_pred, color=color_model)
+    plt.tight_layout()    
 
 
-def plot_data_3d_regression(X, y, ax=None, x_limit=None, y_limit=None, z_limit=None, title=None):
+def plot_data_3d_regression(X, y, ax=None, x_limit=None, y_limit=None, z_limit=None, title=None, new_window=False, rotation=False, color='blue'):
+    aux_plot_data_3d_regression(X, y, ax, x_limit, y_limit, z_limit, title, new_window, rotation, color, False)
+    
+def aux_plot_data_3d_regression(X, y, ax=None, x_limit=None, y_limit=None, z_limit=None, title=None, new_window=False, rotation=False, color='blue', inner_call=False):
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
     else:
         X = X.values()
         labels = X.columns
-     
-    if ax is None:
+    if new_window:
         plt.figure()
+    if ax is None:
         ax = plt.axes(projection='3d')  
     if x_limit:
         ax.set_xlim(x_limit[0], x_limit[1])
@@ -105,23 +100,21 @@ def plot_data_3d_regression(X, y, ax=None, x_limit=None, y_limit=None, z_limit=N
         ax.set_ylim(y_lim[0], y_limit[1])
     if z_limit:
         ax.set_zlim(z_limit[0], z_limit[1])
-    ax.scatter(X[:, 0], X[:, 1], y, s=30, c = 'grey')  
+    ax.scatter(X[:, 0], X[:, 1], y, s=30, c = color)  
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
     ax.set_zlabel("target")
     ax.set_title(title)
 
-    for angle in range(0, 360):
-        ax.view_init(30, angle)
-        plt.draw()
-        plt.pause(.1)
+    if rotation and not inner_call:
+        for angle in range(0, 360):
+            ax.view_init(30, angle)
+            plt.draw()
+            plt.pause(.1)
+    return ax
 
-def plot_model_3d_regression(estimator, X, y, ax=None, x_limit=None, y_limit=None, z_limit=None, title=None):
-    if isinstance(X, np.ndarray) :
-        labels =['X'+str(i) for i in range(X.shape[1])]
-    else:
-        X = X.values()
-        labels = X.columns
+def plot_model_3d_regression(estimator, X, y, ax=None, x_limit=None, y_limit=None, z_limit=None, title=None, new_window=False, rotation=False):
+    ax = aux_plot_data_3d_regression(X, y, ax, x_limit, y_limit, z_limit, title, new_window, rotation, inner_call=True)
      
     x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
     y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
@@ -131,28 +124,14 @@ def plot_model_3d_regression(estimator, X, y, ax=None, x_limit=None, y_limit=Non
     Z = estimator.predict(np.c_[xx.ravel(), yy.ravel()])
     Z = Z.reshape(xx.shape)
     
-    if ax is None:
-        plt.figure()
-        ax = plt.axes(projection='3d') 
-    if x_limit:
-        ax.set_xlim(x_limit[0], x_limit[1])
-    if y_limit:
-        ax.set_ylim(y_lim[0], y_limit[1])
-    if z_limit:
-        ax.set_zlim(z_limit[0], z_limit[1])
-    ax.scatter(X[:,0], X[:,1], y, c = 'grey', s=30)
     ax.plot_surface(xx, yy, Z)
-    ax.set_xlabel(labels[0])
-    ax.set_ylabel(labels[1])
-    ax.set_zlabel("target")
-    ax.set_title(title)
-
     plt.tight_layout()    
     
-    for angle in range(0, 360):
-        ax.view_init(20, angle)
-        plt.draw()
-        plt.pause(.1)        
+    if rotation:
+        for angle in range(0, 360):
+            ax.view_init(20, angle)
+            plt.draw()
+            plt.pause(.1) 
 
 def grid_search_plot_models_regression(estimator, grid, X, y, xlim=None, ylim=None):
     items = sorted(grid.items())

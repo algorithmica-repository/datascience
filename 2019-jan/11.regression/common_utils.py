@@ -186,6 +186,10 @@ def get_best_model(estimator, grid, X, y, scoring='accuracy', cv=10, path='C://'
     grid_estimator = model_selection.GridSearchCV(estimator, grid, scoring=scoring, cv=cv)
     grid_estimator.fit(X, y)
     best_est = grid_estimator.best_estimator_
+    
+    print("Best parameters:" + str(grid_estimator.best_params_) )
+    print("Validation score:" + str(grid_estimator.best_score_) )
+    print("Train score:" + str(grid_estimator.score(X, y)) )
 
     if isinstance(estimator, sklearn.pipeline.Pipeline) :
         final_model = best_est.named_steps['estimator']
@@ -196,19 +200,23 @@ def get_best_model(estimator, grid, X, y, scoring='accuracy', cv=10, path='C://'
     print(name)
     if name.startswith('DecisionTree'):
         write_to_pdf(final_model, X, path)
+        return best_est
     elif (name.startswith('SV') or name.startswith('Logistic') or name.startswith('Linear') or
           name.startswith('Ridge') or name.startswith('Lasso') or name.startswith('Elastic')
          ) :
         if hasattr(final_model, 'coef_'):
             print("Coefficients:" + str(final_model.coef_) )
             print("Intercept:" + str(final_model.intercept_) )
+            return best_est, final_model.coef_, final_model.intercept_
         else :
             print("No model to display")
+    elif name.startswith('Huber'):
+        return best_est, final_model.outliers_
+    elif name.startswith('RANSAC'):
+        return best_est, final_model.inlier_mask_
     else :
         print("No model to display")
-    print("Best parameters:" + str(grid_estimator.best_params_) )
-    print("Validation score:" + str(grid_estimator.best_score_) )
-    print("Train score:" + str(grid_estimator.score(X, y)) )
+
     return best_est
 
 def write_to_pdf(estimator, X, path):
