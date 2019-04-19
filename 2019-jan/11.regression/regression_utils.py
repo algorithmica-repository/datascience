@@ -23,6 +23,11 @@ import sklearn
 def rmse(y_orig, y_pred):
     return math.sqrt(metrics.mean_squared_error(y_orig,y_pred) )
 
+def regression_performance(estimator, X, y):
+    y_pred = estimator.predict(X)
+    print("rmse:" + str(rmse(y, y_pred)))
+    print("r2:" + str(metrics.r2_score(y, y_pred)))
+   
 def generate_nonlinear_synthetic_sine_data_regression(n_samples):
     np.random.seed(0)
     X = np.random.normal(size=n_samples)
