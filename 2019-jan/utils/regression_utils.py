@@ -23,11 +23,14 @@ import sklearn
 def rmse(y_orig, y_pred):
     return math.sqrt(metrics.mean_squared_error(y_orig,y_pred) )
 
-def regression_performance(estimator, X, y):
+def regression_performance(estimator, X, y, mapper=None):
     y_pred = estimator.predict(X)
+    if mapper is not None:
+        y = mapper(y)
+        y_pred = mapper(y_pred)    
     print("rmse:" + str(rmse(y, y_pred)))
     print("r2:" + str(metrics.r2_score(y, y_pred)))
-   
+      
 def generate_nonlinear_synthetic_sine_data_regression(n_samples):
     np.random.seed(0)
     X = np.random.normal(size=n_samples)
@@ -57,8 +60,8 @@ def generate_linear_synthetic_data_regression(n_samples, n_features, n_informati
                            random_state=0, noise=noise)
     return X, y
 
-
-def plot_data_2d_regression(X, y, ax = None, x_limit=None, y_limit=None, title=None, new_window=False, color='blue'):
+def plot_data_2d_regression(X, y, ax = None, x_limit=None, y_limit=None, title=None, new_window=False):
+    plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
     else:
@@ -72,25 +75,44 @@ def plot_data_2d_regression(X, y, ax = None, x_limit=None, y_limit=None, title=N
         ax.set_ylim(y_limit[0], y_limit[1])
     if x_limit:
         ax.set_xlim(x_limit[0], x_limit[1])
-    ax.scatter(X, y, c=color)
+    ax.scatter(X, y, c='blue', cmap=plt.cm.RdYlBu, edgecolor='black', s=30)
     ax.set_xlabel(labels[0])
     ax.set_ylabel("target")
     ax.set_title(title)
-    return ax
+    plt.tight_layout()    
+
     
 def plot_model_2d_regression(estimator, X, y, ax=None, x_limit=None, y_limit=None, title=None, new_window=False, color_model='red', color_data='blue'):
-    ax = plot_data_2d_regression(X, y, ax, x_limit, y_limit, title, new_window, color_data)
+    plt.style.use('seaborn')
+    if isinstance(X, np.ndarray) :
+        labels =['X'+str(i) for i in range(X.shape[1])]
+    else:
+        labels = X.columns
+        X = X.values
+    if new_window:
+        plt.figure()
+    if ax is None:
+        ax = plt.axes()   
+    if y_limit:
+        ax.set_ylim(y_limit[0], y_limit[1])
+    if x_limit:
+        ax.set_xlim(x_limit[0], x_limit[1])
+        
     x_min, x_max = X[:, 0].min(), X[:, 0].max()
     xx = np.arange(x_min, x_max, 0.1)
     y_pred = estimator.predict(xx.reshape(-1, 1))
-    ax.plot(xx, y_pred, color=color_model)
+    ax.plot(xx, y_pred, color='red')
+    
+    ax.scatter(X, y, c='blue', cmap=plt.cm.coolwarm, edgecolor='black', s=30)
+    ax.set_xlabel(labels[0])
+    ax.set_ylabel("target")
+    ax.set_title(title)       
     plt.tight_layout()    
 
 
-def plot_data_3d_regression(X, y, ax=None, x_limit=None, y_limit=None, z_limit=None, title=None, new_window=False, rotation=False, color='blue'):
-    aux_plot_data_3d_regression(X, y, ax, x_limit, y_limit, z_limit, title, new_window, rotation, color, False)
+def plot_data_3d_regression(X, y, ax=None, x_limit=None, y_limit=None, z_limit=None, title=None, new_window=False, rotation=False):
+    plt.style.use('seaborn')
     
-def aux_plot_data_3d_regression(X, y, ax=None, x_limit=None, y_limit=None, z_limit=None, title=None, new_window=False, rotation=False, color='blue', inner_call=False):
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
     else:
@@ -106,21 +128,37 @@ def aux_plot_data_3d_regression(X, y, ax=None, x_limit=None, y_limit=None, z_lim
         ax.set_ylim(y_lim[0], y_limit[1])
     if z_limit:
         ax.set_zlim(z_limit[0], z_limit[1])
-    ax.scatter(X[:, 0], X[:, 1], y, s=30, c = color)  
+    ax.scatter(X[:, 0], X[:, 1], y, c = 'blue', cmap=plt.cm.coolwarm, edgecolor='black', s=30)  
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
     ax.set_zlabel("target")
     ax.set_title(title)
+    plt.tight_layout()    
 
-    if rotation and not inner_call:
+    if rotation:
         for angle in range(0, 360):
             ax.view_init(30, angle)
             plt.draw()
             plt.pause(.1)
-    return ax
 
 def plot_model_3d_regression(estimator, X, y, ax=None, x_limit=None, y_limit=None, z_limit=None, title=None, new_window=False, rotation=False):
-    ax = aux_plot_data_3d_regression(X, y, ax, x_limit, y_limit, z_limit, title, new_window, rotation, inner_call=True)
+    plt.style.use('seaborn')
+
+    if isinstance(X, np.ndarray) :
+        labels =['X'+str(i) for i in range(X.shape[1])]
+    else:
+        labels = X.columns
+        X.values
+    if new_window:
+        plt.figure()
+    if ax is None:
+        ax = plt.axes(projection='3d')  
+    if x_limit:
+        ax.set_xlim(x_limit[0], x_limit[1])
+    if y_limit:
+        ax.set_ylim(y_lim[0], y_limit[1])
+    if z_limit:
+        ax.set_zlim(z_limit[0], z_limit[1])
      
     x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
     y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
@@ -128,9 +166,14 @@ def plot_model_3d_regression(estimator, X, y, ax=None, x_limit=None, y_limit=Non
                              np.arange(y_min, y_max, 0.1))
 
     Z = estimator.predict(np.c_[xx.ravel(), yy.ravel()])
-    Z = Z.reshape(xx.shape)
+    Z = Z.reshape(xx.shape)    
+    ax.plot_surface(xx, yy, Z, cmap=plt.cm.Pastel1, alpha=1)
     
-    ax.plot_surface(xx, yy, Z)
+    ax.scatter(X[:, 0], X[:, 1], y, c = 'blue', cmap=plt.cm.coolwarm, edgecolor='black', s=30)  
+    ax.set_xlabel(labels[0])
+    ax.set_ylabel(labels[1])
+    ax.set_zlabel("target")
+    ax.set_title(title)  
     plt.tight_layout()    
     
     if rotation:
@@ -138,6 +181,9 @@ def plot_model_3d_regression(estimator, X, y, ax=None, x_limit=None, y_limit=Non
             ax.view_init(20, angle)
             plt.draw()
             plt.pause(.1) 
+            
+def rmse(y_orig, y_pred):
+    return math.sqrt(metrics.mean_squared_error(y_orig,y_pred) )
 
 def grid_search_plot_models_regression(estimator, grid, X, y, xlim=None, ylim=None):
     items = sorted(grid.items())
@@ -178,18 +224,4 @@ def plot_coefficients_regression(estimator, X, y, n_alphas=200):
     plt.title('Coefficients as a function of the regularization')
     plt.axis('tight')
 
-def plot_target_and_transformed_target_regression(y, y_trans):
-    fig, (ax0, ax1) = plt.subplots(1, 2)
-
-    ax0.hist(y, bins=100)
-    ax0.set_xlim([0, 2000])
-    ax0.set_ylabel('Probability')
-    ax0.set_xlabel('Target')
-    ax0.set_title('Target distribution')
-
-    ax1.hist(y_trans, bins=100)
-    ax1.set_ylabel('Probability')
-    ax1.set_xlabel('Target')
-    ax1.set_title('Transformed target distribution')
-    fig.tight_layout()
-    
+   
