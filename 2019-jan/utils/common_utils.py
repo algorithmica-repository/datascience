@@ -163,7 +163,7 @@ def grid_search_plot_two_parameter_curves(estimator, grid, X, y, scoring="accura
             plt.draw()
             plt.pause(.1)
 
-def plot_data_1d(X, ax = None, xlim=None, ylim=[-15,15], title=None, new_window=False):
+def plot_data_1d(X, ax = None, xlim=None, ylim=[-15,15], title=None, new_window=True):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -187,7 +187,7 @@ def plot_data_1d(X, ax = None, xlim=None, ylim=[-15,15], title=None, new_window=
     ax.set_title(title)
     ax.legend()
     
-def plot_data_2d(X, ax = None, xlim=None, ylim=None, title=None, new_window=False):
+def plot_data_2d(X, ax = None, xlim=None, ylim=None, title=None, new_window=True):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -210,7 +210,7 @@ def plot_data_2d(X, ax = None, xlim=None, ylim=None, title=None, new_window=Fals
     ax.set_title(title)
     ax.legend()
 
-def plot_data_3d(X, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_window=False, rotation=False):
+def plot_data_3d(X, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_window=True, rotation=False):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]

@@ -43,7 +43,7 @@ def generate_nonlinear_synthetic_data_classification2(n_samples, noise=0.1):
 def generate_nonlinear_synthetic_data_classification3(n_samples, noise=0.1):
     return make_moons(n_samples=100, noise = noise, random_state=100)
 
-def plot_data_1d_classification(X, y, ax = None, xlim=None, ylim=[-15,15], title=None, new_window=False):
+def plot_data_1d_classification(X, y, ax = None, xlim=None, ylim=[-15,15], title=None, new_window=True):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -72,7 +72,7 @@ def plot_data_1d_classification(X, y, ax = None, xlim=None, ylim=[-15,15], title
     ax.set_title(title)
     ax.legend()
     
-def plot_data_2d_classification(X, y, ax = None, xlim=None, ylim=None, title=None, new_window=False):
+def plot_data_2d_classification(X, y, ax = None, xlim=None, ylim=None, title=None, new_window=True):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -100,7 +100,7 @@ def plot_data_2d_classification(X, y, ax = None, xlim=None, ylim=None, title=Non
     ax.set_title(title)
     ax.legend()
 
-def plot_data_3d_classification(X, y=None, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_window=False, rotation=False):
+def plot_data_3d_classification(X, y=None, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_window=True, rotation=False):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -136,7 +136,7 @@ def plot_data_3d_classification(X, y=None, ax = None, xlim=None, ylim=None, zlim
             plt.draw()
             plt.pause(.1)
 
-def plot_model_2d_classification(estimator, X, y, ax = None, xlim=None, ylim=None, title=None, new_window=False, levels=None):
+def plot_model_2d_classification(estimator, X, y, ax = None, xlim=None, ylim=None, title=None, new_window=True, levels=None):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -291,7 +291,7 @@ def plot_binary_roc_curve(y_truth, y_prob, label="", ax=None, new_window=False):
     ax.set_xlabel('False Positive Rate')
     ax.set_ylabel('True Positive Rate')
     ax.legend(loc="lower right")
-    plt.title('ROC curve')
+    ax.set_title('ROC curve')
     plt.tight_layout()
 
 def plot_multiclass_roc_curve(y_truth, y_prob, label="", ax=None, new_window=False):
@@ -328,7 +328,7 @@ def plot_multiclass_roc_curve(y_truth, y_prob, label="", ax=None, new_window=Fal
     ax.set_xlabel('False Positive Rate')
     ax.set_ylabel('True Positive Rate')
     ax.legend(loc="lower right")
-    ax.title('ROC curve')
+    ax.set_title('ROC curve')
     plt.tight_layout()
 
 def plot_binary_pr_curve(y_truth, y_prob, label="", ax=None, new_window=False):
@@ -348,7 +348,7 @@ def plot_binary_pr_curve(y_truth, y_prob, label="", ax=None, new_window=False):
     ax.set_xlabel('Recall')
     ax.set_ylabel('Precision')
     ax.legend(loc="lower right")
-    plt.title('PR curve')
+    ax.set_title('PR curve')
     plt.tight_layout()
 
 def plot_multiclass_pr_curve(y_truth, y_prob, label="", ax=None, new_window=False):
