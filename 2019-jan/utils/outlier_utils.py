@@ -25,7 +25,7 @@ def generate_synthetic_data_outliers(n_samples, outliers_fraction, cluster_separ
     X = np.r_[X, np.random.uniform(low=-6, high=6, size=(n_outliers, 2))]
     return X, y
 
-def plot_data_2d_outliers(X, y=None, ax = None, xlim=None, ylim=None, title=None, new_window=False):
+def plot_data_2d_outliers(X, y=None, ax = None, xlim=None, ylim=None, title=None, new_window=True):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -56,7 +56,7 @@ def plot_data_2d_outliers(X, y=None, ax = None, xlim=None, ylim=None, title=None
     ax.set_title(title)
     ax.legend()
 
-def plot_data_3d_outliers(X, y=None, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_window=False, rotation=False):
+def plot_data_3d_outliers(X, y=None, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_window=True, rotation=False):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -96,7 +96,7 @@ def plot_data_3d_outliers(X, y=None, ax = None, xlim=None, ylim=None, zlim=None,
             plt.draw()
             plt.pause(.1)
 
-def plot_model_2d_outliers(estimator, X, y=None, ax = None, xlim=None, ylim=None, title=None, new_window=False, levels=None):
+def plot_model_2d_outliers(estimator, X, y=None, ax = None, xlim=None, ylim=None, title=None, new_window=True, levels=None):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -128,7 +128,7 @@ def plot_model_2d_outliers(estimator, X, y=None, ax = None, xlim=None, ylim=None
     
     if y is not None:
         y_pred = estimator.predict(X)
-        print(y_pred)
+        #print(y_pred)
         y_pred[y_pred == -1] = 0
         f_score = metrics.f1_score(y, y_pred)
         
@@ -177,6 +177,7 @@ def grid_search_best_model_outliers(estimator, grid, X, y, scoring):
         estimator.set_params(**param)
         estimator.fit(X)  
         y_pred = estimator.predict(X)
+        y_pred[y_pred == -1] = 0
         if scoring == 'roc_auc':
             score = metrics.roc_auc_score(y, y_pred)
         elif scoring == 'f1':
