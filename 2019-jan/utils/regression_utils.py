@@ -60,7 +60,7 @@ def generate_linear_synthetic_data_regression(n_samples, n_features, n_informati
                            random_state=0, noise=noise)
     return X, y
 
-def plot_data_2d_regression(X, y, ax = None, x_limit=None, y_limit=None, title=None, new_window=False):
+def plot_data_2d_regression(X, y, ax = None, x_limit=None, y_limit=None, title=None, new_window=True, color='blue'):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -75,14 +75,14 @@ def plot_data_2d_regression(X, y, ax = None, x_limit=None, y_limit=None, title=N
         ax.set_ylim(y_limit[0], y_limit[1])
     if x_limit:
         ax.set_xlim(x_limit[0], x_limit[1])
-    ax.scatter(X, y, c='blue', cmap=plt.cm.RdYlBu, edgecolor='black', s=30)
+    ax.scatter(X, y, c=color, cmap=plt.cm.RdYlBu, edgecolor='black', s=30)
     ax.set_xlabel(labels[0])
     ax.set_ylabel("target")
     ax.set_title(title)
     plt.tight_layout()    
 
     
-def plot_model_2d_regression(estimator, X, y, ax=None, x_limit=None, y_limit=None, title=None, new_window=False, color_model='red', color_data='blue'):
+def plot_model_2d_regression(estimator, X, y, ax=None, x_limit=None, y_limit=None, title=None, new_window=True):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -110,7 +110,7 @@ def plot_model_2d_regression(estimator, X, y, ax=None, x_limit=None, y_limit=Non
     plt.tight_layout()    
 
 
-def plot_data_3d_regression(X, y, ax=None, x_limit=None, y_limit=None, z_limit=None, title=None, new_window=False, rotation=False):
+def plot_data_3d_regression(X, y, ax=None, x_limit=None, y_limit=None, z_limit=None, title=None, new_window=True, rotation=False):
     plt.style.use('seaborn')
     
     if isinstance(X, np.ndarray) :
@@ -141,7 +141,7 @@ def plot_data_3d_regression(X, y, ax=None, x_limit=None, y_limit=None, z_limit=N
             plt.draw()
             plt.pause(.1)
 
-def plot_model_3d_regression(estimator, X, y, ax=None, x_limit=None, y_limit=None, z_limit=None, title=None, new_window=False, rotation=False):
+def plot_model_3d_regression(estimator, X, y, ax=None, x_limit=None, y_limit=None, z_limit=None, title=None, new_window=True, rotation=False):
     plt.style.use('seaborn')
 
     if isinstance(X, np.ndarray) :
