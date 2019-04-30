@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.datasets import make_circles, make_moons, make_classification
+import matplotlib.cm as cm
 
 def generate_linear_synthetic_data_classification(n_samples, n_features, n_classes, weights, n_redundant=0):
     return make_classification(n_samples = n_samples,
@@ -43,7 +44,8 @@ def generate_nonlinear_synthetic_data_classification2(n_samples, noise=0.1):
 def generate_nonlinear_synthetic_data_classification3(n_samples, noise=0.1):
     return make_moons(n_samples=100, noise = noise, random_state=100)
 
-def plot_data_1d_classification(X, y, ax = None, xlim=None, ylim=[-15,15], title=None, new_window=True):
+
+def plot_data_1d_classification(X, y, ax = None, xlim=None, ylim=[-15,15], title=None, new_window=True, s=30):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -59,20 +61,20 @@ def plot_data_1d_classification(X, y, ax = None, xlim=None, ylim=[-15,15], title
     if xlim:
         ax.set_xlim(xlim[0], xlim[1])
         
-    colors = "ryb"
     n_classes = set(y)
+    colors = cm.rainbow(np.linspace(0, 1, len(n_classes)) )
     class_labels = [str(i) for i in n_classes]
     zero_array = np.zeros((X.shape[0],1))
     for i, color in zip(n_classes, colors):
         idx = np.where(y == i)
         ax.scatter(X[idx, 0], zero_array[idx, 0]+i*0.2, c=color, label = class_labels[i],
-                    cmap=plt.cm.RdYlBu, edgecolor='black', s=30) 
+                    cmap=plt.cm.RdYlBu, edgecolor='black', s=s) 
     ax.set_xlabel(labels[0])
     ax.set_ylabel('')
     ax.set_title(title)
     ax.legend()
     
-def plot_data_2d_classification(X, y, ax = None, xlim=None, ylim=None, title=None, new_window=True):
+def plot_data_2d_classification(X, y, ax = None, xlim=None, ylim=None, title=None, new_window=True, s=30):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -88,19 +90,19 @@ def plot_data_2d_classification(X, y, ax = None, xlim=None, ylim=None, title=Non
     if xlim:
         ax.set_xlim(xlim[0], xlim[1])
         
-    colors = "ryb"
     n_classes = set(y)
+    colors = cm.rainbow(np.linspace(0, 1, len(n_classes)) )
     class_labels = [str(i) for i in n_classes]
     for i, color in zip(n_classes, colors):
         idx = np.where(y == i)
         ax.scatter(X[idx, 0], X[idx, 1], c=color, label = class_labels[i],
-                    cmap=plt.cm.RdYlBu, edgecolor='black', s=30) 
+                    cmap=plt.cm.RdYlBu, edgecolor='black', s=s) 
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
     ax.set_title(title)
     ax.legend()
 
-def plot_data_3d_classification(X, y=None, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_window=True, rotation=False):
+def plot_data_3d_classification(X, y=None, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_window=True, rotation=False, s=30):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -118,13 +120,13 @@ def plot_data_3d_classification(X, y=None, ax = None, xlim=None, ylim=None, zlim
     if zlim:
         ax.set_zlim(zlim[0], zlim[1])     
       
-    colors = "ryb"
     n_classes = set(y)
+    colors = cm.rainbow(np.linspace(0, 1, len(n_classes)) )
     class_labels = [str(i) for i in n_classes]
     for i, color in zip(n_classes, colors):
         idx = np.where(y == i)
         ax.scatter(X[idx, 0], X[idx, 1], X[idx, 2], c=color, label = class_labels[i],
-                       cmap=plt.cm.RdYlBu, edgecolor='black', s=30) 
+                       cmap=plt.cm.RdYlBu, edgecolor='black', s=s) 
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
     ax.set_zlabel(labels[2])
@@ -136,7 +138,7 @@ def plot_data_3d_classification(X, y=None, ax = None, xlim=None, ylim=None, zlim
             plt.draw()
             plt.pause(.1)
 
-def plot_model_2d_classification(estimator, X, y, ax = None, xlim=None, ylim=None, title=None, new_window=True, levels=None):
+def plot_model_2d_classification(estimator, X, y, ax = None, xlim=None, ylim=None, title=None, new_window=True, levels=None, s=30):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -166,13 +168,13 @@ def plot_model_2d_classification(estimator, X, y, ax = None, xlim=None, ylim=Non
     else:
         ax.contourf(xx, yy, Z, cmap=plt.cm.Pastel1, alpha=1)
     
-    colors = "ryb"
     n_classes = set(y)
+    colors = cm.rainbow(np.linspace(0, 1, len(n_classes)) )
     class_labels = [str(i) for i in n_classes]
     for i, color in zip(n_classes, colors):
         idx = np.where(y == i)
         ax.scatter(X[idx, 0], X[idx, 1], c=color, label = class_labels[i],
-                    cmap=plt.cm.coolwarm, edgecolor='black', s=30) 
+                    cmap=plt.cm.coolwarm, edgecolor='black', s=s) 
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
     ax.set_title(title)

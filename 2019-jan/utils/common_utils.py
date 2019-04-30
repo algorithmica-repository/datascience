@@ -163,7 +163,7 @@ def grid_search_plot_two_parameter_curves(estimator, grid, X, y, scoring="accura
             plt.draw()
             plt.pause(.1)
 
-def plot_data_1d(X, ax = None, xlim=None, ylim=[-15,15], title=None, new_window=True):
+def plot_data_1d(X, ax = None, xlim=None, ylim=[-15,15], title=None, new_window=True, s=30):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -181,13 +181,13 @@ def plot_data_1d(X, ax = None, xlim=None, ylim=[-15,15], title=None, new_window=
         
     zero_array = np.zeros((X.shape[0],1))
     ax.scatter(X[:, 0], zero_array[:, 0], color='red',
-                    cmap=plt.cm.RdYlBu, edgecolor='black', s=30) 
+                    cmap=plt.cm.RdYlBu, edgecolor='black', s=s) 
     ax.set_xlabel(labels[0])
     ax.set_ylabel('')
     ax.set_title(title)
     ax.legend()
     
-def plot_data_2d(X, ax = None, xlim=None, ylim=None, title=None, new_window=True):
+def plot_data_2d(X, ax = None, xlim=None, ylim=None, title=None, new_window=True, s=30):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -204,13 +204,13 @@ def plot_data_2d(X, ax = None, xlim=None, ylim=None, title=None, new_window=True
         ax.set_xlim(xlim[0], xlim[1])
         
     ax.scatter(X[:, 0], X[:, 1], color='red',
-                    cmap=plt.cm.RdYlBu, edgecolor='black', s=30) 
+                    cmap=plt.cm.RdYlBu, edgecolor='black', s=s) 
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
     ax.set_title(title)
     ax.legend()
 
-def plot_data_3d(X, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_window=True, rotation=False):
+def plot_data_3d(X, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_window=True, rotation=False, s=30):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -229,7 +229,7 @@ def plot_data_3d(X, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_
         ax.set_zlim(zlim[0], zlim[1])     
       
     ax.scatter(X[:, 0], X[:, 1], X[:, 2], color='red', 
-                       cmap=plt.cm.RdYlBu, edgecolor='black', s=30) 
+                       cmap=plt.cm.RdYlBu, edgecolor='black', s=s) 
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
     ax.set_zlabel(labels[2])
