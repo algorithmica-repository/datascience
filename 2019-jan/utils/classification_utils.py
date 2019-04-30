@@ -12,6 +12,9 @@ from matplotlib.colors import ListedColormap
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.datasets import make_circles, make_moons, make_classification
 import matplotlib.cm as cm
+from sklearn import cluster,metrics
+from common_utils import *
+from classification_utils import *
 
 def generate_linear_synthetic_data_classification(n_samples, n_features, n_classes, weights, n_redundant=0):
     return make_classification(n_samples = n_samples,
@@ -73,7 +76,8 @@ def plot_data_1d_classification(X, y, ax = None, xlim=None, ylim=[-15,15], title
     ax.set_ylabel('')
     ax.set_title(title)
     ax.legend()
-    
+    return ax
+
 def plot_data_2d_classification(X, y, ax = None, xlim=None, ylim=None, title=None, new_window=True, s=30):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
@@ -101,7 +105,8 @@ def plot_data_2d_classification(X, y, ax = None, xlim=None, ylim=None, title=Non
     ax.set_ylabel(labels[1])
     ax.set_title(title)
     ax.legend()
-
+    return ax
+	
 def plot_data_3d_classification(X, y=None, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_window=True, rotation=False, s=30):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
@@ -137,6 +142,8 @@ def plot_data_3d_classification(X, y=None, ax = None, xlim=None, ylim=None, zlim
             ax.view_init(30, angle)
             plt.draw()
             plt.pause(.1)
+    return ax
+
 
 def plot_model_2d_classification(estimator, X, y, ax = None, xlim=None, ylim=None, title=None, new_window=True, levels=None, s=30):
     plt.style.use('seaborn')
@@ -180,6 +187,8 @@ def plot_model_2d_classification(estimator, X, y, ax = None, xlim=None, ylim=Non
     ax.set_title(title)
     ax.legend()
     plt.tight_layout()
+    return ax
+
 
 def grid_search_plot_models_classification(estimator, grid, X, y, xlim=None, ylim=None, outlier_estimator=False, levels=None):
     plt.style.use('seaborn')
