@@ -21,7 +21,7 @@ plot_data_2d_regression(X_train, y_train)
 
 dt_estimator = tree.DecisionTreeRegressor()
 dt_grid = { 'max_depth':list(range(1,10)) }
-grid_search_plot_models_regression(dt_estimator, dt_grid, X_train, y_train )
+grid_search_plot_models_2d_regression(dt_estimator, dt_grid, X_train, y_train )
 grid_search_plot_one_parameter_curves(dt_estimator, dt_grid, X_train, y_train, scoring =  scoring)
 dt_final_model = grid_search_best_model(dt_estimator, dt_grid, X_train, y_train, scoring = scoring )
 plot_model_2d_regression(dt_final_model, X_train, y_train)
@@ -34,6 +34,7 @@ plot_data_3d_regression(X_train, y_train)
 
 dt_estimator = tree.DecisionTreeRegressor()
 dt_grid = { 'max_depth':list(range(1,10)) }
+grid_search_plot_models_3d_regression(dt_estimator, dt_grid, X_train, y_train )
 grid_search_plot_one_parameter_curves(dt_estimator, dt_grid, X_train, y_train, scoring =  scoring)
 dt_final_model = grid_search_best_model(dt_estimator, dt_grid, X_train, y_train, scoring = scoring )
 plot_model_3d_regression(dt_final_model, X_train, y_train)
