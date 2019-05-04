@@ -22,7 +22,7 @@ plot_data_2d_regression(X_train, y_train)
 #uniform knn
 knn_estimator = neighbors.KNeighborsRegressor()
 knn_grid = {'n_neighbors':list(range(1,10)) }
-grid_search_plot_models_regression(knn_estimator, knn_grid, X_train, y_train)
+grid_search_plot_models_2d_regression(knn_estimator, knn_grid, X_train, y_train)
 grid_search_plot_one_parameter_curves(knn_estimator, knn_grid, X_train, y_train, scoring =  scoring)
 knn_final_model = grid_search_best_model(knn_estimator, knn_grid, X_train, y_train, scoring = scoring )
 plot_model_2d_regression(knn_final_model, X_train, y_train)
@@ -30,7 +30,7 @@ plot_model_2d_regression(knn_final_model, X_train, y_train)
 #weighted knn
 knn_estimator = neighbors.KNeighborsRegressor(weights='distance')
 knn_grid = {'n_neighbors':list(range(1,10)) }
-grid_search_plot_models_regression(knn_estimator, knn_grid, X_train, y_train)
+grid_search_plot_models_2d_regression(knn_estimator, knn_grid, X_train, y_train)
 grid_search_plot_one_parameter_curves(knn_estimator, knn_grid, X_train, y_train, scoring =  scoring)
 knn_final_model = grid_search_best_model(knn_estimator, knn_grid, X_train, y_train, scoring = scoring )
 plot_model_2d_regression(knn_final_model, X_train, y_train)
@@ -43,6 +43,7 @@ plot_data_3d_regression(X_train, y_train)
 #uniform knn
 knn_estimator = neighbors.KNeighborsRegressor()
 knn_grid = {'n_neighbors':list(range(1,10)) }
+grid_search_plot_models_3d_regression(knn_estimator, knn_grid, X_train, y_train)
 grid_search_plot_one_parameter_curves(knn_estimator, knn_grid, X_train, y_train, scoring =  scoring)
 knn_final_model = grid_search_best_model(knn_estimator, knn_grid, X_train, y_train, scoring = scoring )
 plot_model_3d_regression(knn_final_model, X_train, y_train)
@@ -51,6 +52,7 @@ regression_performance(knn_final_model, X_test, y_test)
 #weighted knn
 knn_estimator = neighbors.KNeighborsRegressor(weights='distance')
 knn_grid = {'n_neighbors':list(range(1,10)) }
+grid_search_plot_models_3d_regression(knn_estimator, knn_grid, X_train, y_train)
 grid_search_plot_one_parameter_curves(knn_estimator, knn_grid, X_train, y_train, scoring =  scoring)
 knn_final_model = grid_search_best_model(knn_estimator, knn_grid, X_train, y_train, scoring = scoring )
 plot_model_3d_regression(knn_final_model, X_train, y_train)
