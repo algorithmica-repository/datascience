@@ -22,7 +22,7 @@ plot_data_2d_regression(X_train, y_train)
 dt_estimator = tree.DecisionTreeRegressor()
 ada_estimator = ensemble.AdaBoostRegressor(base_estimator=dt_estimator)
 ada_grid = {'n_estimators':list(range(100,300,100)), 'base_estimator__max_depth':list(range(1,4)), 'learning_rate':[0.1,0.5]}
-grid_search_plot_models_regression(ada_estimator, ada_grid, X_train, y_train )
+grid_search_plot_models_2d_regression(ada_estimator, ada_grid, X_train, y_train )
 grid_search_plot_two_parameter_curves(gb_estimator, gb_grid, X_train, y_train, scoring =  scoring)
 ada_final_model = grid_search_best_model(ada_estimator, ada_grid, X_train, y_train, scoring = scoring )
 plot_model_2d_regression(ada_final_model, X_train, y_train)
@@ -30,7 +30,7 @@ regression_performance(ada_final_model, X_test, y_test)
 
 gb_estimator = ensemble.GradientBoostingRegressor()
 gb_grid = {'n_estimators':list(range(10,100,40)), 'max_depth':list(range(3,5)), 'learning_rate':[0.1,0.5]}
-grid_search_plot_models_regression(gb_estimator, gb_grid, X_train, y_train )
+grid_search_plot_models_2d_regression(gb_estimator, gb_grid, X_train, y_train )
 grid_search_plot_two_parameter_curves(gb_estimator, gb_grid, X_train, y_train, scoring =  scoring)
 gb_final_model = grid_search_best_model(gb_estimator, gb_grid, X_train, y_train, scoring = scoring )
 plot_model_2d_regression(gb_final_model, X_train, y_train)
@@ -44,6 +44,7 @@ plot_data_3d_regression(X_train, y_train)
 dt_estimator = tree.DecisionTreeRegressor()
 ada_estimator = ensemble.AdaBoostRegressor(base_estimator=dt_estimator)
 ada_grid = {'n_estimators':list(range(10,100,40)), 'base_estimator__max_depth':list(range(3,5)), 'learning_rate':[0.1,0.5]}
+grid_search_plot_models_3d_regression(ada_estimator, ada_grid, X_train, y_train )
 grid_search_plot_two_parameter_curves(gb_estimator, gb_grid, X_train, y_train, scoring =  scoring)
 ada_final_model = grid_search_best_model(ada_estimator, ada_grid, X_train, y_train, scoring = scoring )
 plot_model_3d_regression(ada_final_model, X_train, y_train)
@@ -51,6 +52,7 @@ regression_performance(ada_final_model, X_test, y_test)
 
 gb_estimator = ensemble.GradientBoostingRegressor()
 gb_grid = {'n_estimators':list(range(10,100,40)), 'max_depth':list(range(3,5)), 'learning_rate':[0.1,0.5]}
+grid_search_plot_models_3d_regression(gb_estimator, gb_grid, X_train, y_train )
 grid_search_plot_two_parameter_curves(gb_estimator, gb_grid, X_train, y_train, scoring =  scoring)
 gb_final_model = grid_search_best_model(gb_estimator, gb_grid, X_train, y_train, scoring = scoring )
 plot_model_3d_regression(gb_final_model, X_train, y_train)
