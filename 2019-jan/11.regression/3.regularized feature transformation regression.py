@@ -28,7 +28,7 @@ poly_lr_estimator = Pipeline([('features', PolynomialFeatures()) ,
                               ('estimator', linear_model.LinearRegression())]
                             )
 poly_lr_grid = {'features__degree':[1, 10, 20, 40] }
-grid_search_plot_models_regression(poly_lr_estimator, poly_lr_grid, X_train, y_train )
+grid_search_plot_models_2d_regression(poly_lr_estimator, poly_lr_grid, X_train, y_train )
 grid_search_plot_one_parameter_curves(poly_lr_estimator, poly_lr_grid, X_train, y_train, scoring = scoring)
 poly_lr_final_model = grid_search_best_model(poly_lr_estimator, poly_lr_grid, X_train, y_train, scoring = scoring )
 plot_model_2d_regression(poly_lr_final_model, X_train, y_train)
@@ -41,7 +41,7 @@ poly_ridge_estimator = Pipeline([('features', PolynomialFeatures()) ,
 poly_ridge_grid = {'features__degree':[2, 3, 9, 10], 
                    'estimator__alpha':[0.01, 0.1, 1, 10]
                    }
-grid_search_plot_models_regression(poly_ridge_estimator, poly_ridge_grid, X_train, y_train )
+grid_search_plot_models_2d_regression(poly_ridge_estimator, poly_ridge_grid, X_train, y_train )
 grid_search_plot_two_parameter_curves(poly_ridge_estimator, poly_ridge_grid, X_train, y_train, scoring =  scoring)
 poly_ridge_final_model = grid_search_best_model(poly_ridge_estimator, poly_ridge_grid, X_train, y_train, scoring = scoring )
 plot_model_2d_regression(poly_ridge_final_model, X_train, y_train)
@@ -55,7 +55,7 @@ poly_lasso_estimator = Pipeline([('features', PolynomialFeatures()) ,
 poly_lasso_grid = {'features__degree':[2, 3, 9, 10], 
                    'estimator__alpha':[0.001, 0.01, 0.1, 10] 
                    }
-grid_search_plot_models_regression(poly_lasso_estimator, poly_lasso_grid, X_train, y_train )
+grid_search_plot_models_2d_regression(poly_lasso_estimator, poly_lasso_grid, X_train, y_train )
 grid_search_plot_two_parameter_curves(poly_lasso_estimator, poly_lasso_grid, X_train, y_train, scoring =  scoring)
 poly_lasso_final_model = grid_search_best_model(poly_lasso_estimator, poly_lasso_grid, X_train, y_train, scoring = scoring )
 plot_model_2d_regression(poly_lasso_final_model, X_train, y_train)
@@ -75,6 +75,7 @@ poly_lr_estimator = Pipeline([('features', PolynomialFeatures()) ,
                               ('estimator', linear_model.LinearRegression())]
                             )
 poly_lr_grid = {'features__degree':[1, 10, 20, 40] }
+grid_search_plot_models_3d_regression(poly_lr_estimator, poly_lr_grid, X_train, y_train )
 grid_search_plot_one_parameter_curves(poly_lr_estimator, poly_lr_grid, X_train, y_train, scoring = scoring)
 poly_lr_final_model = grid_search_best_model(poly_lr_estimator, poly_lr_grid, X_train, y_train, scoring = scoring )
 plot_model_3d_regression(poly_lr_final_model, X_train, y_train)
@@ -87,6 +88,7 @@ poly_ridge_estimator = Pipeline([('features', PolynomialFeatures()) ,
 poly_ridge_grid = {'features__degree':[2, 3, 9, 10], 
                    'estimator__alpha':[0.01, 0.1, 1, 10]
                    }
+grid_search_plot_models_3d_regression(poly_ridge_estimator, poly_ridge_grid, X_train, y_train )
 grid_search_plot_two_parameter_curves(poly_ridge_estimator, poly_ridge_grid, X_train, y_train, scoring =  scoring)
 poly_ridge_final_model = grid_search_best_model(poly_ridge_estimator, poly_ridge_grid, X_train, y_train, scoring = scoring )
 plot_model_3d_regression(poly_ridge_final_model, X_train, y_train)
@@ -100,6 +102,7 @@ poly_lasso_estimator = Pipeline([('features', PolynomialFeatures()) ,
 poly_lasso_grid = {'features__degree':[2, 3, 9, 10], 
                    'estimator__alpha':[0.001, 0.01, 0.1, 10] 
                    }
+grid_search_plot_models_3d_regression(poly_lasso_estimator, poly_lasso_grid, X_train, y_train )
 grid_search_plot_two_parameter_curves(poly_lasso_estimator, poly_lasso_grid, X_train, y_train, scoring =  scoring)
 poly_lasso_final_model = grid_search_best_model(poly_lasso_estimator, poly_lasso_grid, X_train, y_train, scoring = scoring )
 plot_model_3d_regression(poly_lasso_final_model, X_train, y_train)
