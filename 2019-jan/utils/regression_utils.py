@@ -185,7 +185,23 @@ def plot_model_3d_regression(estimator, X, y, ax=None, x_limit=None, y_limit=Non
 def rmse(y_orig, y_pred):
     return math.sqrt(metrics.mean_squared_error(y_orig,y_pred) )
 
-def grid_search_plot_models_regression(estimator, grid, X, y, xlim=None, ylim=None):
+def grid_search_plot_models_3d_regression(estimator, grid, X, y, xlim=None, ylim=None, zlim=None):
+    items = sorted(grid.items())
+    keys, values = zip(*items)
+    params =[]
+    for v in product(*values):
+        params.append(dict(zip(keys, v)))
+    n = len(params)
+    fig, axes = plt.subplots(int(math.sqrt(n)), math.ceil(math.sqrt(n)), figsize=(20, 20), dpi=80, subplot_kw=dict(projection='3d'))
+    print(axes)
+    axes = np.array(axes)
+    for ax, param in zip(axes.reshape(-1), params):
+        estimator.set_params(**param)
+        estimator.fit(X, y)        
+        plot_model_3d_regression(estimator, X, y, ax, xlim, ylim, zlim, str(param))
+    plt.tight_layout()
+    
+def grid_search_plot_models_2d_regression(estimator, grid, X, y, xlim=None, ylim=None):
     items = sorted(grid.items())
     keys, values = zip(*items)
     params =[]
