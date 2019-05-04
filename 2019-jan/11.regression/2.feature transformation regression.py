@@ -27,7 +27,7 @@ poly_lr_estimator = Pipeline([('features', PolynomialFeatures()) ,
                               ('estimator', linear_model.LinearRegression())]
                             )
 poly_lr_grid = {'features__degree':[1, 10, 20, 40] }
-grid_search_plot_models_regression(poly_lr_estimator, poly_lr_grid, X_train, y_train )
+grid_search_plot_models_2d_regression(poly_lr_estimator, poly_lr_grid, X_train, y_train )
 grid_search_plot_one_parameter_curves(poly_lr_estimator, poly_lr_grid, X_train, y_train, scoring = scoring)
 poly_lr_final_model = grid_search_best_model(poly_lr_estimator, poly_lr_grid, X_train, y_train, scoring = scoring )
 plot_model_2d_regression(poly_lr_final_model, X_train, y_train)
@@ -41,7 +41,7 @@ gauss_lr_estimator = Pipeline([('features', GaussianFeatures()) ,
                                ('estimator', linear_model.LinearRegression())]
                             )
 gauss_lr_grid = {'features__n_centres':[15, 20, 30, 36] }
-grid_search_plot_models_regression(gauss_lr_estimator, gauss_lr_grid, X_train, y_train )
+grid_search_plot_models_2d_regression(gauss_lr_estimator, gauss_lr_grid, X_train, y_train )
 grid_search_plot_one_parameter_curves(gauss_lr_estimator, gauss_lr_grid, X_train, y_train, scoring = scoring)
 gauss_lr_final_model = grid_search_best_model(gauss_lr_estimator, gauss_lr_grid, X_train, y_train, scoring = scoring )
 plot_model_2d_regression(gauss_lr_final_model, X_train, y_train)
@@ -60,6 +60,7 @@ poly_lr_estimator = Pipeline([('features', PolynomialFeatures()) ,
                               ('estimator', linear_model.LinearRegression())]
                             )
 poly_lr_grid = {'features__degree':[1, 10, 20, 40] }
+grid_search_plot_models_3d_regression(poly_lr_estimator, poly_lr_grid, X_train, y_train )
 grid_search_plot_one_parameter_curves(poly_lr_estimator, poly_lr_grid, X_train, y_train, scoring = scoring)
 poly_lr_final_model = grid_search_best_model(poly_lr_estimator, poly_lr_grid, X_train, y_train, scoring = scoring )
 plot_model_3d_regression(poly_lr_final_model, X_train, y_train)
