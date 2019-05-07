@@ -163,7 +163,7 @@ def grid_search_plot_two_parameter_curves(estimator, grid, X, y, scoring="accura
             plt.draw()
             plt.pause(.1)
 
-def plot_data_1d(X, ax = None, xlim=None, ylim=[-15,15], title=None, new_window=True, s=30):
+def plot_data_1d(X, ax = None, xlim=None, title=None, new_window=True, s=30):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -174,8 +174,6 @@ def plot_data_1d(X, ax = None, xlim=None, ylim=[-15,15], title=None, new_window=
         plt.figure()
     if ax is None:
         ax = plt.axes()   
-    if ylim:
-        ax.set_ylim(ylim[0], ylim[1])
     if xlim:
         ax.set_xlim(xlim[0], xlim[1])
         
