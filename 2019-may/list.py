@@ -18,6 +18,7 @@ list1.pop()
 
 list2 = [30, list1]
 print(list2)
+print(list2[1][0])
 
 for x in list1:
     print(type(x))
