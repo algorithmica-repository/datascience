@@ -7,7 +7,8 @@
 
 #class allows us to create user defined types
 
-class Dummy():
+#creating classes
+class Dummy1():
     def __init__(self, a, b):
         self.a = a
         self.b = b
@@ -15,15 +16,46 @@ class Dummy():
         return self.a + self.b
     def mul(self):
         return self.a * self.b
-
-d1 = Dummy(10, 20)
-print(id(d1))
+    
+print(help(Dummy1))    
+d1 = Dummy1(10, 20)
 print(d1.add())
 print(d1.mul())
-print(d1.a)
+print(d1.__dict__)
 
-d2 = Dummy(2, 3)
-print(id(d2))
-print(d2.add())
-print(d2.mul())
-print(d2.a)
+#inheritance
+class A():
+    def __init__(self, a):
+        self.a = a
+    def display(self):
+        return self.a
+
+class B(A):
+    def __init__(self, a, b):
+        super().__init__(a)
+        self.b = b
+    def display(self):
+        return self.a, self.b
+        
+class C(B):
+    def display(self):
+        return self.a+10, self.b+10
+
+a = A(10)
+print(a.__dict__)
+print(a.display())
+
+b = B(10, 20)
+print(b.__dict__)
+print(b.display())
+
+c = C(30, 40)
+print(c.__dict__)
+print(c.display())
+
+#check the type of object at runtime
+print(type(a) == A)
+print(isinstance(a, A))    
+
+print(type(b) == A)
+print(isinstance(b, A))   
