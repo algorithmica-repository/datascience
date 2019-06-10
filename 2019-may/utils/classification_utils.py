@@ -78,16 +78,14 @@ def plot_data_1d_classification(X, y, ax = None, xlim=None, ylim=[-15,15], title
     ax.legend()
     return ax
 
-def plot_data_2d_classification(X, y, ax = None, xlim=None, ylim=None, title=None, new_window=True, s=30):
-    plt.style.use('seaborn')
-    if isinstance(X, np.ndarray) :
-        labels =['X'+str(i) for i in range(X.shape[1])]
-    else:
+def plot_data_2d_classification(X, y, ax = None, xlim=None, ylim=None, title="Data", labels=None, alpha=1, s=30, legend=True, marker='o'):
+    if isinstance(X, np.ndarray) and labels is None:
+        labels =['X'+str(i) for i in range(X.shape[1])]      
+    if isinstance(X, pd.core.frame.DataFrame):
         labels = X.columns
         X = X.values
-    if new_window:
-        plt.figure()
     if ax is None:
+        plt.figure(figsize=(20, 20))
         ax = plt.axes()   
     if ylim:
         ax.set_ylim(ylim[0], ylim[1])
@@ -99,12 +97,13 @@ def plot_data_2d_classification(X, y, ax = None, xlim=None, ylim=None, title=Non
     class_labels = [str(i) for i in n_classes]
     for i, color in zip(n_classes, colors):
         idx = np.where(y == i)
-        ax.scatter(X[idx, 0], X[idx, 1], c=color, label = class_labels[i],
-                    cmap=plt.cm.RdYlBu, edgecolor='black', s=s) 
+        ax.scatter(X[idx, 0], X[idx, 1], c=color, label = class_labels[i], marker=marker,
+                    cmap=plt.cm.RdYlBu, edgecolor='black', s=s, alpha=alpha) 
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
     ax.set_title(title)
-    ax.legend()
+    if legend:
+        ax.legend()
     return ax
 	
 def plot_data_3d_classification(X, y=None, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_window=True, rotation=False, s=30):
