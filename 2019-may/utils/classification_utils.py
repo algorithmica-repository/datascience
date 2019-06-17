@@ -16,11 +16,12 @@ from sklearn import cluster,metrics
 from common_utils import *
 from classification_utils import *
 
-def generate_linear_synthetic_data_classification(n_samples, n_features, n_classes, weights, n_redundant=0):
+def generate_linear_synthetic_data_classification(n_samples, n_features, n_classes, weights, class_sep=0.1, n_redundant=0):
     return make_classification(n_samples = n_samples,
                                        n_features = n_features,
                                        n_informative = n_features - n_redundant,
                                        n_clusters_per_class=1,
+                                       class_sep=class_sep,
                                        n_redundant = n_redundant,
                                        n_classes = n_classes,
                                        weights = weights, random_state=100)
