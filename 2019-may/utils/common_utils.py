@@ -24,9 +24,9 @@ def get_continuous_features(df):
     return df.select_dtypes(include=['number']).columns
 
 def get_categorical_features(df):
-    return df.select_dtypes(exclude=['number']).columns
+    return df.select_dtypes(include=['category']).columns
 
-def cast_cont_to_cat(df, features):
+def cast_to_cat(df, features):
     for feature in features:
         df[feature] = df[feature].astype('category')
 
@@ -163,7 +163,12 @@ def grid_search_plot_two_parameter_curves(estimator, grid, X, y, scoring="accura
             plt.draw()
             plt.pause(.1)
 
-def plot_data_1d(X, ax = None, xlim=None, ylim=[-15,15], title=None, new_window=False):
+def get_grid_shape(n):
+    r = int(math.sqrt(n))
+    c = int(math.ceil(n/r))
+    return r, c
+
+def plot_data_1d(X, ax = None, xlim=None, title=None, new_window=True, s=30):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -174,20 +179,18 @@ def plot_data_1d(X, ax = None, xlim=None, ylim=[-15,15], title=None, new_window=
         plt.figure()
     if ax is None:
         ax = plt.axes()   
-    if ylim:
-        ax.set_ylim(ylim[0], ylim[1])
     if xlim:
         ax.set_xlim(xlim[0], xlim[1])
         
     zero_array = np.zeros((X.shape[0],1))
     ax.scatter(X[:, 0], zero_array[:, 0], color='red',
-                    cmap=plt.cm.RdYlBu, edgecolor='black', s=30) 
+                    cmap=plt.cm.RdYlBu, edgecolor='black', s=s) 
     ax.set_xlabel(labels[0])
     ax.set_ylabel('')
     ax.set_title(title)
     ax.legend()
     
-def plot_data_2d(X, ax = None, xlim=None, ylim=None, title=None, new_window=False):
+def plot_data_2d(X, ax = None, xlim=None, ylim=None, title=None, new_window=True, s=30):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -204,13 +207,13 @@ def plot_data_2d(X, ax = None, xlim=None, ylim=None, title=None, new_window=Fals
         ax.set_xlim(xlim[0], xlim[1])
         
     ax.scatter(X[:, 0], X[:, 1], color='red',
-                    cmap=plt.cm.RdYlBu, edgecolor='black', s=30) 
+                    cmap=plt.cm.RdYlBu, edgecolor='black', s=s) 
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
     ax.set_title(title)
     ax.legend()
 
-def plot_data_3d(X, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_window=False, rotation=False):
+def plot_data_3d(X, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_window=True, rotation=False, s=30):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -229,7 +232,7 @@ def plot_data_3d(X, ax = None, xlim=None, ylim=None, zlim=None, title=None, new_
         ax.set_zlim(zlim[0], zlim[1])     
       
     ax.scatter(X[:, 0], X[:, 1], X[:, 2], color='red', 
-                       cmap=plt.cm.RdYlBu, edgecolor='black', s=30) 
+                       cmap=plt.cm.RdYlBu, edgecolor='black', s=s) 
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
     ax.set_zlabel(labels[2])
