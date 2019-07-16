@@ -1,5 +1,5 @@
 import sys
-sys.path.append("E:/")
+sys.path.append("G:/")
 
 import pandas as pd
 import os
@@ -8,7 +8,7 @@ from sklearn import preprocessing, neighbors, svm, linear_model, ensemble, pipel
 import classification_utils as cutils
 import seaborn as sns
 
-dir = 'E:/'
+dir = 'G:/'
 titanic_train = pd.read_csv(os.path.join(dir, 'train.csv'))
 print(titanic_train.shape)
 print(titanic_train.info())
@@ -64,6 +64,11 @@ titanic[cont_features] = cont_imputers.transform(titanic[cont_features])
 #one hot encoding
 titanic = utils.ohe(titanic, cat_features)
 
+#scale the data
+scaler = preprocessing.StandardScaler()
+tmp = scaler.fit_transform(titanic)
+titanic = pd.DataFrame(tmp, columns=titanic.columns)
+
 titanic_train1 = titanic[:titanic_train.shape[0]]
 y_train = titanic_train['Survived']
 
@@ -74,11 +79,11 @@ rf_final_estimator = cutils.grid_search_best_model(rf_estimator, rf_grid, titani
 X_train = utils.select_features(rf_final_estimator, titanic_train1, threshold='median')
 
 kernel_svm_estimator = svm.SVC(kernel='rbf')
-kernel_svm_grid = {'gamma':[0.001, 0.01], 'C':[100] }
+kernel_svm_grid = {'gamma':[0.001, 0.01, 0.05, 0.1, 1], 'C':[10, 100] }
 svm_final_estimator = cutils.grid_search_best_model(kernel_svm_estimator, kernel_svm_grid, X_train, y_train)
 
 titanic_test1 = titanic[titanic_train.shape[0]:]
-X_test = utils.select_features(rf_final_estimator, titanic_test1, threshold='mean')
+X_test = utils.select_features(rf_final_estimator, titanic_test1, threshold='median')
 
 titanic_test['Survived'] = svm_final_estimator.predict(X_test)
 titanic_test.to_csv(os.path.join(dir, 'submission.csv'), columns=['PassengerId', 'Survived'], index=False)
