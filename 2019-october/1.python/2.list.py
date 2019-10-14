@@ -30,5 +30,13 @@ list1[2:]
 list1[:3]
 
 #manipulate list
+list1[0] = 30
 list1.append(50)
 list1.pop()
+
+#enumeration over list
+for x in list1:
+    print(x)
+
+for i,x in enumerate(list1):
+    print(i, x)
