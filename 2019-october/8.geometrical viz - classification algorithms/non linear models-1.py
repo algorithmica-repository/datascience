@@ -6,6 +6,7 @@ from sklearn import model_selection, ensemble, tree, neighbors
 import xgboost as xgb
 
 #2-d classification pattern
+X, y = cutils.generate_linear_synthetic_data_classification(n_samples=1000, n_features=2, n_classes=2, weights=[0.5, 0.5], class_sep=2)
 X, y = cutils.generate_nonlinear_synthetic_data_classification2(n_samples=1000, noise=0.1)
 cutils.plot_data_2d_classification(X, y)
 
