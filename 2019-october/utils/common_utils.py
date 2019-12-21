@@ -26,6 +26,9 @@ def get_continuous_features(df):
 def get_categorical_features(df):
     return df.select_dtypes(include=['category']).columns
 
+def get_non_continuous_features(df):
+    return df.select_dtypes(exclude=['number']).columns
+
 def cast_to_cat(df, features):
     for feature in features:
         df[feature] = df[feature].astype('category')

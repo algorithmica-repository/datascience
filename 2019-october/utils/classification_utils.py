@@ -12,7 +12,6 @@ from mpl_toolkits.mplot3d import Axes3D
 from sklearn.datasets import make_circles, make_moons, make_classification
 import matplotlib.cm as cm
 from sklearn import cluster,metrics
-from common_utils import *
 
 def generate_linear_synthetic_data_classification(n_samples, n_features, n_classes, weights, class_sep=0.1, n_redundant=0):
     return make_classification(n_samples = n_samples,
@@ -143,7 +142,7 @@ def plot_data_3d_classification(X, y=None, ax = None, xlim=None, ylim=None, zlim
     return ax
 
 
-def plot_model_2d_classification(estimator, X, y, ax = None, xlim=None, ylim=None, title=None, new_window=True, levels=None, s=30):
+def plot_model_2d_classification(estimator, X, y, ax = None, xlim=None, ylim=None, title=None, new_window=True, levels=None, s=30, use_keras=False):
     plt.style.use('seaborn')
     if isinstance(X, np.ndarray) :
         labels =['X'+str(i) for i in range(X.shape[1])]
@@ -166,7 +165,10 @@ def plot_model_2d_classification(estimator, X, y, ax = None, xlim=None, ylim=Non
         y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
         xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.1),
                              np.arange(y_min, y_max, 0.1))
-    Z = estimator.predict(np.c_[xx.ravel(), yy.ravel()])
+    if use_keras:
+        Z = estimator.predict_classes(np.c_[xx.ravel(), yy.ravel()])
+    else:
+         Z = estimator.predict(np.c_[xx.ravel(), yy.ravel()])
     Z = Z.reshape(xx.shape)
     if levels:
         ax.contour(xx, yy, Z, levels=levels, linewidths=2, colors='red', alpha=1)
@@ -207,9 +209,12 @@ def grid_search_plot_models_classification(estimator, grid, X, y, xlim=None, yli
         plot_model_2d_classification(estimator, X, y, ax, xlim, ylim, str(param), False, levels)
     plt.tight_layout()
 
-def performance_metrics_hard_binary_classification(estimator, X, y):
+def performance_metrics_hard_binary_classification(estimator, X, y, use_keras=False):
     print('[Confusion Matrix]')
-    y_pred = estimator.predict(X)
+    if use_keras:
+        y_pred = estimator.predict_classes(X)
+    else:
+        y_pred = estimator.predict(X)
     print(metrics.confusion_matrix(y, y_pred))
     print('\n[Accuracy]')
     p = metrics.accuracy_score(y, y_pred)
@@ -224,13 +229,16 @@ def performance_metrics_hard_binary_classification(estimator, X, y):
     f = metrics.f1_score(y, y_pred)
     print(f)
 
-def performance_metrics_hard_multiclass_classification(estimator, X, y):
+def performance_metrics_hard_multiclass_classification(estimator, X, y, use_keras=False):
     onevsrest = False
     name = str(estimator)
     if "Logistic" in name or "SV" in name:
         onevsrest = True
     print('[Confusion Matrix]')
-    y_pred = estimator.predict(X)
+    if use_keras:
+        y_pred = estimator.predict_classes(X)
+    else:
+        y_pred = estimator.predict(X)    
     print(metrics.confusion_matrix(y, y_pred))
     print('\n[Precision]')
     if onevsrest:
